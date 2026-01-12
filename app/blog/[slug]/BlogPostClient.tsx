@@ -18,7 +18,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
       >
         <Link
           href="/"
-          className="text-primary-600 dark:text-primary-400 hover:underline mb-6 inline-block"
+          className="text-barca-blue hover:text-barca-red hover:underline mb-6 inline-block font-semibold"
         >
           ← Back to Home
         </Link>
@@ -31,7 +31,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
         className="mb-8"
       >
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-        <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
+        <div className="flex items-center gap-4 text-gray-600">
           <span>{post.date}</span>
           {post.author && <span>by {post.author}</span>}
         </div>
@@ -58,7 +58,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="prose prose-lg dark:prose-invert max-w-none"
+        className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-barca-blue prose-a:hover:text-barca-red"
       >
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </motion.div>

@@ -36,7 +36,7 @@ export default function ScrollToTop() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-colors z-50"
+          className="fixed bottom-8 right-8 bg-barca-blue text-white p-4 rounded-full shadow-lg hover:bg-barca-dark transition-colors z-50"
           aria-label="Scroll to top"
         >
           <svg

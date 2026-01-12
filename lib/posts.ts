@@ -15,7 +15,7 @@ const posts: Post[] = [
     date: '2024-01-15',
     author: 'Team Manager',
     excerpt: 'We are excited to launch our official blog where we will share updates, match reports, and team news.',
-    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
+    image: '/images/team/team-1.jpg',
     content: `
       <p>Welcome to the official Imus United Football Club blog! We are thrilled to have this platform to connect with our fans and share the latest news from our team.</p>
       
@@ -38,7 +38,7 @@ const posts: Post[] = [
     date: '2024-01-20',
     author: 'Coach',
     excerpt: 'Our team is ready for an exciting new season. Read about our preparations and goals for 2024.',
-    image: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=800&h=600&fit=crop',
+    image: '/images/team/team-2.jpg',
     content: `
       <p>The new season is upon us, and we couldn't be more excited! After months of preparation, our team is ready to hit the field.</p>
       
@@ -63,7 +63,7 @@ const posts: Post[] = [
     date: '2024-01-25',
     author: 'Match Reporter',
     excerpt: 'A thrilling match that ended in a 3-1 victory. Read the full match report here.',
-    image: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&h=600&fit=crop',
+    image: '/images/team/team-3.jpg',
     content: `
       <p>What a match! Our team delivered an outstanding performance against our rivals, securing a well-deserved 3-1 victory.</p>
       

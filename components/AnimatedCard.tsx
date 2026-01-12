@@ -32,7 +32,7 @@ export default function AnimatedCard({
     >
       <Link
         href={`/blog/${slug}`}
-        className="block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full"
+        className="block bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden h-full group"
       >
         {image ? (
           <div className="relative h-48 overflow-hidden">
@@ -51,20 +51,19 @@ export default function AnimatedCard({
           </div>
         ) : (
           <motion.div
-            className="h-48 bg-gradient-to-br from-primary-400 to-primary-600"
+            className="h-48 bg-gradient-to-br from-barca-blue to-barca-dark"
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
           />
         )}
         <div className="p-6">
-          <motion.span
-            className="text-sm text-primary-600 dark:text-primary-400"
-            whileHover={{ scale: 1.1 }}
-          >
-            {date}
-          </motion.span>
-          <h3 className="text-xl font-semibold mt-2 mb-2">{title}</h3>
-          <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-1.5 h-1.5 bg-barca-red rounded-full"></span>
+            <span className="text-xs text-gray-500 uppercase font-semibold">FIRST TEAM</span>
+            <span className="text-xs text-gray-400">{date}</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-barca-blue transition-colors">{title}</h3>
+          <p className="text-gray-600 line-clamp-3">
             {excerpt}
           </p>
         </div>

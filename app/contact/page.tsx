@@ -18,10 +18,10 @@ export default function Contact() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+          className="bg-white p-6 rounded-lg shadow-md"
         >
           <h2 className="text-2xl font-semibold mb-4">Get in Touch</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <p className="text-gray-600 mb-4">
             Have a question or want to reach out? We'd love to hear from you!
           </p>
           <div className="space-y-2">
@@ -35,10 +35,10 @@ export default function Contact() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+          className="bg-white p-6 rounded-lg shadow-md"
         >
           <h2 className="text-2xl font-semibold mb-4">Follow Us</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <p className="text-gray-600 mb-4">
             Stay connected with us on social media for the latest updates.
           </p>
           <div className="space-y-2">
@@ -47,28 +47,28 @@ export default function Contact() {
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05, x: 5 }}
-              className="block text-primary-600 dark:text-primary-400 hover:underline"
+              className="block text-barca-blue hover:text-barca-red hover:underline"
             >
               Facebook
             </motion.a>
             <motion.a
               href="#"
               whileHover={{ scale: 1.05, x: 5 }}
-              className="block text-primary-600 dark:text-primary-400 hover:underline"
+              className="block text-barca-blue hover:text-barca-red hover:underline"
             >
               Twitter
             </motion.a>
             <motion.a
               href="#"
               whileHover={{ scale: 1.05, x: 5 }}
-              className="block text-primary-600 dark:text-primary-400 hover:underline"
+              className="block text-barca-blue hover:text-barca-red hover:underline"
             >
               Instagram
             </motion.a>
             <motion.a
               href="#"
               whileHover={{ scale: 1.05, x: 5 }}
-              className="block text-primary-600 dark:text-primary-400 hover:underline"
+              className="block text-barca-blue hover:text-barca-red hover:underline"
             >
               YouTube
             </motion.a>
@@ -80,7 +80,7 @@ export default function Contact() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+        className="bg-white p-6 rounded-lg shadow-md"
       >
         <h2 className="text-2xl font-semibold mb-4">Send us a Message</h2>
         <form className="space-y-4">
@@ -95,7 +95,7 @@ export default function Contact() {
             <input
               type="text"
               id="name"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-barca-blue focus:border-transparent transition-all"
               placeholder="Your name"
             />
           </motion.div>
@@ -110,7 +110,7 @@ export default function Contact() {
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-barca-blue focus:border-transparent transition-all"
               placeholder="your.email@example.com"
             />
           </motion.div>
@@ -125,7 +125,7 @@ export default function Contact() {
             <textarea
               id="message"
               rows={6}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-barca-blue focus:border-transparent transition-all"
               placeholder="Your message"
             ></textarea>
           </motion.div>
@@ -133,7 +133,7 @@ export default function Contact() {
             type="submit"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            className="bg-barca-blue text-white px-6 py-2 rounded-lg hover:bg-barca-dark transition-colors font-semibold uppercase tracking-wide"
           >
             Send Message
           </motion.button>
