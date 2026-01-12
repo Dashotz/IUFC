@@ -9,8 +9,6 @@ import dynamic from 'next/dynamic'
 const MapComponent = dynamic(() => import('./MapComponent'), { ssr: false })
 
 export default function Footer() {
-
-
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12 md:py-16">

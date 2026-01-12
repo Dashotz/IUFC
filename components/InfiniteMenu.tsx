@@ -1175,13 +1175,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
     }
   }, [items, scale])
 
-  const handleButtonClick = () => {
-    if (!activeItem?.link) return
-    if (activeItem.link.startsWith('http')) {
-      window.open(activeItem.link, '_blank')
-    }
-  }
-
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', backgroundColor: '#000000' }}>
       <canvas 

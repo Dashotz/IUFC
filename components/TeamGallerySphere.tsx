@@ -23,7 +23,7 @@ export default function TeamGallerySphere() {
   })
 
   return (
-    <section className="bg-gray-900 relative w-full overflow-hidden" style={{ height: '100dvh', margin: 0, padding: 0 }}>
+    <section className="bg-gray-900 relative w-full overflow-hidden m-0 p-0" style={{ height: '100dvh' }}>
       {/* Overlay Title */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -43,7 +43,7 @@ export default function TeamGallerySphere() {
       </motion.div>
       
       {/* Full Coverage Sphere */}
-      <div className="w-full h-full absolute inset-0" style={{ margin: 0, padding: 0 }}>
+      <div className="w-full h-full absolute inset-0 m-0 p-0">
         <InfiniteMenu items={galleryItems} scale={1.5} />
       </div>
     </section>

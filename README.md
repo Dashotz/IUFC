@@ -18,34 +18,12 @@ A modern, animated website for Imus United Football Club built with Next.js, fea
 - Scroll to top button
 - Animated hero section
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
-### Installation
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Run the development server:
-```bash
-npm run dev
-```
-
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
 ## Project Structure
 
 ```
 ├── app/              # Next.js app directory
 │   ├── about/        # About page
 │   ├── contact/      # Contact page
-│   ├── assets/       # Images and videos
 │   └── page.tsx      # Home page
 ├── components/       # React components
 │   ├── Hero.tsx      # Hero section with navigation
