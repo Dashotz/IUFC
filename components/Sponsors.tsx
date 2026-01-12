@@ -11,9 +11,11 @@ interface Sponsor {
 // Add your sponsor names/logos here
 const sponsors: Sponsor[] = [
   { name: 'EFX', logo: '/images/sponsors/efx.png' },
+  { name: 'TSL', logo: '/images/sponsors/tsl.png' },
   { name: 'Parents' },
   { name: 'Volunteers' },
   { name: 'EFX', logo: '/images/sponsors/efx.png' },
+  { name: 'TSL', logo: '/images/sponsors/tsl.png' },
   { name: 'Parents' },
   { name: 'Volunteers' },
 ]
@@ -75,6 +77,7 @@ export default function Sponsors() {
                       width={120}
                       height={60}
                       className="max-w-full max-h-full object-contain"
+                      style={{ width: 'auto', height: 'auto' }}
                     />
                   ) : (
                     <div className="flex flex-col items-center gap-2">

@@ -71,24 +71,16 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Section - Copyright and Legal Links */}
+      {/* Bottom Section - Copyright */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/80 text-sm">
               ©{new Date().getFullYear()} Imus United FC. All Rights Reserved.
             </p>
-            <div className="flex gap-6 text-sm">
-              <Link href="#" className="text-white/80 hover:text-barca-red transition-colors">
-                Terms Of Services
-              </Link>
-              <Link href="#" className="text-white/80 hover:text-barca-red transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="#" className="text-white/80 hover:text-barca-red transition-colors">
-                Cookie Policy
-              </Link>
-            </div>
+            <p className="text-white/60 text-xs">
+              A non-profit organization dedicated to developing morally upright athletes.
+            </p>
           </div>
         </div>
       </div>

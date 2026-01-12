@@ -1,21 +1,22 @@
-# Imus United Football Club - Official Blog
+# Imus United Football Club - Official Website
 
-A modern, animated blog website for Imus United Football Club built with Next.js, featuring 3D elements, smooth animations, and deployed on Netlify.
+A modern, animated website for Imus United Football Club built with Next.js, featuring smooth animations, team information, events, and deployed on Netlify.
 
 ## Features
 
 - Modern, responsive design with Tailwind CSS
 - Mobile-friendly layout
-- Dark mode support
 - Fast static site generation
-- Blog post system with images
 - Smooth animations with Framer Motion
-- 3D interactive elements with React Three Fiber
-- Image gallery with modal view
+- Team and coaches section
+- Events and sponsors sections
+- Benefits section with video
+- Contact section
+- Interactive map for field location
 - Optimized image handling
 - Optimized for Netlify deployment
 - Scroll to top button
-- Animated hero section with 3D sphere
+- Animated hero section
 
 ## Getting Started
 
@@ -42,30 +43,20 @@ npm run dev
 
 ```
 ├── app/              # Next.js app directory
-│   ├── blog/         # Blog post pages
 │   ├── about/        # About page
 │   ├── contact/      # Contact page
+│   ├── assets/       # Images and videos
 │   └── page.tsx      # Home page
 ├── components/       # React components
-│   ├── Header.tsx    # Navigation header
-│   └── Footer.tsx    # Footer component
-├── lib/              # Utility functions
-│   └── posts.ts      # Blog post data
-└── public/           # Static assets
+│   ├── Hero.tsx      # Hero section with navigation
+│   ├── Footer.tsx    # Footer component
+│   ├── Sponsors.tsx   # Sponsors section
+│   ├── TeamSection.tsx # Team and coaches section
+│   └── ...           # Other components
+└── public/           # Static assets (images, videos)
 ```
 
 ## Customization
-
-### Adding Blog Posts
-
-Edit `lib/posts.ts` to add new blog posts. Each post should have:
-- `slug`: URL-friendly identifier
-- `title`: Post title
-- `date`: Publication date (YYYY-MM-DD)
-- `excerpt`: Short description
-- `content`: HTML content
-- `author`: Optional author name
-- `image`: Optional image URL
 
 ### Styling
 
@@ -83,51 +74,14 @@ The site is already configured for **Imus United Football Club**. Update the fol
 
 ### Adding Real Images
 
-Replace the placeholder images in:
-- `app/page.tsx` - Gallery images (currently using Unsplash placeholders)
-- `lib/posts.ts` - Blog post images
+All images are stored in the `public/images/` directory:
+- `public/images/global/` - Logo and background images
+- `public/images/team/` - Team photos and event images
+- `public/images/coaches/` - Coach photos
+- `public/images/sponsors/` - Sponsor logos
+- `public/images/gallery/` - Gallery images
 
-You can:
-1. Add images to the `public/images/` directory
-2. Use the Facebook Graph API to fetch images from the team's Facebook page
-3. Update image URLs in the code to point to your image sources
-
-## Deployment to Netlify
-
-### Option 1: Deploy via Netlify UI
-
-1. Push your code to GitHub/GitLab/Bitbucket
-2. Go to [Netlify](https://www.netlify.com/)
-3. Click "New site from Git"
-4. Select your repository
-5. Build settings:
-   - **Build command**: `npm run build`
-   - **Publish directory**: `out`
-6. Click "Deploy site"
-
-### Option 2: Deploy via Netlify CLI
-
-1. Install Netlify CLI:
-```bash
-npm install -g netlify-cli
-```
-
-2. Build the project:
-```bash
-npm run build
-```
-
-3. Deploy:
-```bash
-netlify deploy --prod
-```
-
-### Configuration
-
-The `netlify.toml` file is already configured with:
-- Build command
-- Publish directory
-- Redirect rules for client-side routing
+Update image paths in components to reference images from the `public` folder.
 
 ## Technologies Used
 
@@ -142,12 +96,12 @@ The `netlify.toml` file is already configured with:
 
 ## Animation Features
 
-- **Hero Section**: 3D rotating sphere with animated background particles
+- **Hero Section**: Animated hero with background image and gradient overlay
 - **Page Transitions**: Smooth fade and slide animations on page load
-- **Card Animations**: Hover effects and staggered entrance animations
-- **Image Gallery**: Modal view with smooth transitions
-- **Scroll Animations**: Elements animate as they come into view
+- **Section Animations**: Elements animate as they come into view
+- **Scroll Animations**: Smooth scroll behavior for navigation
 - **Interactive Elements**: Hover and tap animations throughout
+- **Sponsors Carousel**: Infinite scrolling sponsors section
 
 ## License
 

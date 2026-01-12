@@ -361,7 +361,6 @@ function createShader(gl: WebGL2RenderingContext, type: number, source: string):
     return shader
   }
 
-  console.error(gl.getShaderInfoLog(shader))
   gl.deleteShader(shader)
   return null
 }
@@ -401,7 +400,6 @@ function createProgram(
     return program
   }
 
-  console.error(gl.getProgramInfoLog(program))
   gl.deleteProgram(program)
   return null
 }
@@ -742,13 +740,11 @@ class InfiniteGridMenu {
 
   public resize(): void {
     if (!this.gl) {
-      console.warn('Cannot resize: WebGL context not available')
       return
     }
     const needsResize = resizeCanvasToDisplaySize(this.canvas)
     if (needsResize || this.canvas.width === 0 || this.canvas.height === 0) {
       this.gl.viewport(0, 0, this.gl.drawingBufferWidth, this.gl.drawingBufferHeight)
-      console.log('Canvas resized to:', this.gl.drawingBufferWidth, 'x', this.gl.drawingBufferHeight)
     }
     this.updateProjectionMatrix()
   }
@@ -768,7 +764,6 @@ class InfiniteGridMenu {
   private init(onInit?: InitCallback): void {
     // Ensure canvas has dimensions
     if (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
-      console.warn('Canvas has no dimensions, setting default')
       this.canvas.style.width = '100%'
       this.canvas.style.height = '100%'
     }
@@ -779,7 +774,6 @@ class InfiniteGridMenu {
       preserveDrawingBuffer: false
     })
     if (!gl) {
-      console.error('WebGL 2 is not supported in this browser')
       throw new Error('No WebGL 2 context!')
     }
     this.gl = gl
@@ -842,7 +836,6 @@ class InfiniteGridMenu {
 
   private initTexture(): void {
     if (!this.gl) {
-      console.error('Cannot init texture: No WebGL context')
       return
     }
     const gl = this.gl
@@ -854,13 +847,11 @@ class InfiniteGridMenu {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     if (!ctx) {
-      console.error('Cannot create 2D context for texture atlas')
       return
     }
     canvas.width = this.atlasSize * cellSize
     canvas.height = this.atlasSize * cellSize
 
-    console.log('Loading', this.items.length, 'images for texture atlas...')
     Promise.all(
       this.items.map(
         (item, index) =>
@@ -868,11 +859,9 @@ class InfiniteGridMenu {
             const img = new Image()
             img.crossOrigin = 'anonymous'
             img.onload = () => {
-              console.log(`Image ${index + 1} loaded:`, item.image)
               resolve(img)
             }
-            img.onerror = (error) => {
-              console.error(`Failed to load image ${index + 1}:`, item.image, error)
+            img.onerror = () => {
               // Create a placeholder image
               const placeholder = document.createElement('canvas')
               placeholder.width = cellSize
@@ -892,7 +881,6 @@ class InfiniteGridMenu {
           })
       )
     ).then(images => {
-      console.log('All images loaded, creating texture atlas...')
       images.forEach((img, i) => {
         const x = (i % this.atlasSize) * cellSize
         const y = Math.floor(i / this.atlasSize) * cellSize
@@ -902,9 +890,8 @@ class InfiniteGridMenu {
       gl.bindTexture(gl.TEXTURE_2D, this.tex)
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas)
       gl.generateMipmap(gl.TEXTURE_2D)
-      console.log('Texture atlas created successfully')
-    }).catch(error => {
-      console.error('Error loading images:', error)
+    }).catch(() => {
+      // Silently handle errors
     })
   }
 
@@ -972,8 +959,6 @@ class InfiniteGridMenu {
 
   private render(): void {
     if (!this.gl || !this.discProgram) {
-      if (!this.gl) console.warn('No WebGL context in render')
-      if (!this.discProgram) console.warn('No shader program in render')
       return
     }
     const gl = this.gl
@@ -1121,7 +1106,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) {
-      console.error('Canvas ref is null')
       return
     }
 
@@ -1130,7 +1114,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
     if (container) {
       const rect = container.getBoundingClientRect()
       if (rect.width === 0 || rect.height === 0) {
-        console.warn('Container has no dimensions, waiting...')
         setTimeout(() => {
           if (canvasRef.current) {
             const newRect = canvasRef.current.parentElement?.getBoundingClientRect()
@@ -1153,21 +1136,17 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
     }
 
     try {
-      console.log('Initializing InfiniteMenu with', items.length, 'items')
       sketch = new InfiniteGridMenu(
         canvas,
         items.length ? items : defaultItems,
         handleActiveItem,
         setIsMoving,
         sk => {
-          console.log('Starting animation loop')
           sk.run()
         },
         scale
       )
-      console.log('InfiniteMenu initialized successfully')
     } catch (error) {
-      console.error('Failed to initialize InfiniteMenu:', error)
       return
     }
 
@@ -1200,8 +1179,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
     if (!activeItem?.link) return
     if (activeItem.link.startsWith('http')) {
       window.open(activeItem.link, '_blank')
-    } else {
-      console.log('Internal route:', activeItem.link)
     }
   }
 
@@ -1218,10 +1195,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
           <h2 className={`face-title ${isMoving ? 'inactive' : 'active'}`}>{activeItem.title}</h2>
 
           <p className={`face-description ${isMoving ? 'inactive' : 'active'}`}>{activeItem.description}</p>
-
-          <div onClick={handleButtonClick} className={`action-button ${isMoving ? 'inactive' : 'active'}`}>
-            <p className="action-button-icon">&#x2197;</p>
-          </div>
         </>
       )}
     </div>

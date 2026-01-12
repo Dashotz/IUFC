@@ -7,8 +7,12 @@ import ScrollToTop from '@/components/ScrollToTop'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Imus United Football Club - Official Blog',
-  description: 'Official blog of Imus United Football Club. Stay updated with match reports, team news, and events.',
+  title: 'Imus United Football Club - Official Website',
+  description: 'Official website of Imus United Football Club. A non-profit organization dedicated to developing morally upright athletes capable of availing scholarships and competing at the national and international level.',
+  icons: {
+    icon: '/images/global/logo.png',
+    apple: '/images/global/logo.png',
+  },
 }
 
 export default function RootLayout({

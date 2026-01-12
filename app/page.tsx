@@ -4,6 +4,7 @@ import TwoColumnSection from '@/components/TwoColumnSection'
 import BenefitsSection from '@/components/BenefitsSection'
 import EventsSection from '@/components/EventsSection'
 import TeamSection from '@/components/TeamSection'
+import TeamGallerySphere from '@/components/TeamGallerySphere'
 import ContactSection from '@/components/ContactSection'
 
 export default function Home() {
@@ -44,6 +45,14 @@ export default function Home() {
       {/* Events Section */}
       <div id="events">
         <EventsSection />
+      </div>
+      
+      {/* Divider */}
+      <div className="w-full h-px bg-gray-300"></div>
+      
+      {/* Team Gallery Sphere */}
+      <div id="gallery">
+        <TeamGallerySphere />
       </div>
       
       {/* Divider */}
