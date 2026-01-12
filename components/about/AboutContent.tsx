@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import TeamSection from '@/components/TeamSection'
+import Divider from '@/components/Divider'
+import { images } from '@/app/assets/images'
 
 export default function AboutContent() {
   return (
@@ -30,8 +32,7 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
 
       {/* Mission Section */}
       <section className="bg-white py-16 md:py-24">
@@ -45,7 +46,7 @@ export default function AboutContent() {
               className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-2xl"
             >
               <Image
-                src="/images/team/banner1.jpg"
+                src={images.team.banner1}
                 alt="Imus United FC - Team in Action"
                 fill
                 className="object-cover"
@@ -76,8 +77,7 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300"></div>
+      <Divider variant="light" />
 
       {/* History Section */}
       <section className="bg-gray-50 py-16 md:py-24">
@@ -112,7 +112,7 @@ export default function AboutContent() {
               className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-2xl order-1 lg:order-2"
             >
               <Image
-                src="/images/team/banner2.jpg"
+                src={images.team.banner2}
                 alt="Imus United FC - Team Celebration"
                 fill
                 className="object-cover"
@@ -122,8 +122,7 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300"></div>
+      <Divider variant="light" />
 
       {/* Values Section */}
       <section className="bg-gray-900 py-16 md:py-24">
@@ -177,16 +176,14 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
 
       {/* Coaches Section */}
       <section id="coaches" className="bg-white py-16 md:py-24">
         <TeamSection />
       </section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300"></div>
+      <Divider variant="light" />
 
       {/* Join Us Section */}
       <section className="bg-gray-900 py-16 md:py-24">

@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useState } from 'react'
+import { images } from '@/app/assets/images'
+import { videos } from '@/app/assets/videos'
 
 const benefits = [
   {
@@ -101,7 +103,7 @@ export default function BenefitsSection() {
                 <div className="absolute inset-0 rounded-full border-8 border-amber-900 shadow-2xl"></div>
                 <div className="absolute inset-2 rounded-full overflow-hidden">
                   <Image
-                    src="/images/team/benefits.jpg"
+                    src={images.team.benefits}
                     alt="Imus United FC - Team in Action"
                     fill
                     className="object-cover rounded-full"
@@ -209,7 +211,7 @@ export default function BenefitsSection() {
               {/* Video Player */}
               <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
                 <video
-                  src="/videos/benefits.mp4"
+                  src={videos.benefits}
                   controls
                   autoPlay
                   className="w-full h-full"

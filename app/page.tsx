@@ -5,59 +5,47 @@ import BenefitsSection from '@/components/BenefitsSection'
 import EventsSection from '@/components/EventsSection'
 import TeamSection from '@/components/TeamSection'
 import ContactSection from '@/components/ContactSection'
+import Divider from '@/components/Divider'
 
 export default function Home() {
-
   return (
     <>
       <div id="home">
         <Hero />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
       
-      {/* Sponsors Section */}
       <div id="sponsors">
         <Sponsors />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
       
-      {/* Two Column Section - Mission */}
       <div id="mission">
         <TwoColumnSection />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
       
-      {/* Benefits Section */}
       <div id="benefits">
         <BenefitsSection />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-800"></div>
+      <Divider variant="dark" />
       
-      {/* Events Section */}
       <div id="events">
         <EventsSection />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300"></div>
+      <Divider variant="light" />
       
-      {/* Team Section - Coaches */}
       <div id="coaches">
         <TeamSection />
       </div>
       
-      {/* Divider */}
-      <div className="w-full h-px bg-gray-300"></div>
+      <Divider variant="light" />
       
-      {/* Contact Section */}
       <div id="contact">
         <ContactSection />
       </div>
