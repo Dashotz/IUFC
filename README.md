@@ -63,23 +63,56 @@ Update image paths in components to reference images from the `public` folder.
 
 ## Technologies Used
 
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
+### Core Framework
+- **Next.js 14** - React framework with App Router and static export
+- **React 18** - UI library
+- **TypeScript** - Type safety and better developer experience
+
+### Styling & UI
 - **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Animation library for React
-- **React Three Fiber** - 3D graphics library
-- **Three.js** - 3D library
-- **@react-three/drei** - Useful helpers for React Three Fiber
-- **Netlify** - Hosting and deployment
+- **PostCSS** - CSS processing
+- **Autoprefixer** - Automatic vendor prefixing
 
-## Animation Features
+### Animation & 3D Graphics
+- **Framer Motion** - Animation library for React (smooth page transitions and scroll animations)
+- **Three.js** - 3D graphics library
+- **React Three Fiber** - React renderer for Three.js
+- **@react-three/drei** - Useful helpers and abstractions for React Three Fiber
+- **gl-matrix** - High-performance matrix and vector math for WebGL
 
+### Maps & Location
+- **Leaflet** - Interactive maps library
+- **React Leaflet** - React components for Leaflet
+- **OpenStreetMap** - Map tile provider
+
+### Development Tools
+- **ESLint** - Code linting
+- **Next.js ESLint Config** - Optimized ESLint configuration for Next.js
+
+### Deployment & Hosting
+- **Netlify** - Static site hosting and deployment
+- **Static Export** - Fully static site generation for optimal performance
+
+## Features & Animations
+
+### Interactive 3D Gallery
+- **Team Gallery Sphere**: Interactive 3D rotating sphere showcasing team photos
+- **WebGL-powered**: Smooth 60fps 3D rendering using Three.js and React Three Fiber
+- **Touch & Mouse Controls**: Drag to rotate, intuitive navigation
+
+### Animation Features
 - **Hero Section**: Animated hero with background image and gradient overlay
 - **Page Transitions**: Smooth fade and slide animations on page load
-- **Section Animations**: Elements animate as they come into view
-- **Scroll Animations**: Smooth scroll behavior for navigation
+- **Section Animations**: Elements animate as they come into view using Intersection Observer
+- **Scroll Animations**: Smooth scroll behavior for navigation with scroll-to-top and scroll-to-team buttons
 - **Interactive Elements**: Hover and tap animations throughout
 - **Sponsors Carousel**: Infinite scrolling sponsors section
+
+### Performance Optimizations
+- **WebP Images**: All images converted to WebP format for optimal file sizes
+- **Lazy Loading**: Images load on demand to improve initial page load
+- **Code Splitting**: Optimized bundle splitting for faster load times
+- **Static Export**: Fully static site for maximum performance
 
 ## License
 
