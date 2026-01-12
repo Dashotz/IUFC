@@ -2,6 +2,20 @@
   command = "npm run build"
   publish = "out"
 
+# Exclude static files from SPA redirect
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+  force = true
+
+# SPA redirect for all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
