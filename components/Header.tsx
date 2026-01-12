@@ -18,12 +18,14 @@ export default function Header() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/" className="flex items-center gap-3">
                 <Image
-                  src="/images/global/logo.png"
+                  src="/images/global/logo.webp"
                   alt="Imus United Football Club Logo"
                   width={50}
                   height={50}
                   className="object-contain"
                   priority
+                  sizes="50px"
+                  quality={90}
                 />
                 <span className="text-xl font-bold text-white hidden sm:inline">
                   IMUS UNITED FC

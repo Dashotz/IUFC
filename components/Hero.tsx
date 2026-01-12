@@ -66,7 +66,7 @@ export default function Hero() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/" className="flex items-center gap-3">
                 <Image
-                  src="/images/global/logo.png"
+                  src="/images/global/logo.webp"
                   alt="Imus United Football Club Logo"
                   width={80}
                   height={80}

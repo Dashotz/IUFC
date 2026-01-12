@@ -1,7 +1,17 @@
 'use client'
 
-import InfiniteMenu from './InfiniteMenu'
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
+
+// Lazy load InfiniteMenu to reduce initial bundle size
+const InfiniteMenu = dynamic(() => import('./InfiniteMenu'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-black">
+      <div className="text-white text-sm">Loading gallery...</div>
+    </div>
+  ),
+})
 
 interface MenuItem {
   image: string

@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <Image
-                src="/images/global/logo.png"
+                src="/images/global/logo.webp"
                 alt="Imus United Football Club Logo"
                 width={50}
                 height={50}
