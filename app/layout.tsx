@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
+import ScrollToTeam from '@/components/ScrollToTeam'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         <main className="min-h-screen overflow-x-hidden">{children}</main>
         <Footer />
         <ScrollToTop />
+        <ScrollToTeam />
       </body>
     </html>
   )
