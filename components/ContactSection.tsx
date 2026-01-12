@@ -10,7 +10,7 @@ export default function ContactSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/team/join.jpg"
+          src="/images/team/join.webp"
           alt="Join Us Background"
           fill
           className="object-cover"

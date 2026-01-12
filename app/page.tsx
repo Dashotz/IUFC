@@ -10,7 +10,7 @@ import ContactSection from '@/components/ContactSection'
 export default function Home() {
 
   return (
-    <>
+    <div className="overflow-x-hidden w-full">
       <div id="home">
         <Hero />
       </div>
@@ -70,6 +70,6 @@ export default function Home() {
       <div id="contact">
         <ContactSection />
       </div>
-    </>
+    </div>
   )
 }

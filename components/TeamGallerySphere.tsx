@@ -15,8 +15,8 @@ export default function TeamGallerySphere() {
   const galleryItems: MenuItem[] = Array.from({ length: 30 }, (_, i) => {
     const imageNumber = i + 1
     return {
-      image: `/images/gallery/gallery${imageNumber}.jpg`,
-      link: `/images/gallery/gallery${imageNumber}.jpg`,
+      image: `/images/gallery/gallery${imageNumber}.webp`,
+      link: `/images/gallery/gallery${imageNumber}.webp`,
       title: `Team Photo ${imageNumber}`,
       description: 'Imus United FC Team Gallery'
     }

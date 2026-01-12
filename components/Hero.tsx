@@ -41,12 +41,13 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/global/image-bg.jpg"
+          src="/images/global/image-bg.webp"
           alt="Imus United Football Club"
           fill
           className="object-cover"
           priority
-          quality={90}
+          quality={75}
+          sizes="100vw"
         />
         {/* Gradient overlay - darker at bottom for text */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
@@ -71,6 +72,8 @@ export default function Hero() {
                   height={80}
                   className="object-contain w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
                   priority
+                  sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 96px"
+                  quality={90}
                 />
                 <span className="text-lg sm:text-xl font-bold text-white hidden xs:inline">
                   IMUS UNITED FC

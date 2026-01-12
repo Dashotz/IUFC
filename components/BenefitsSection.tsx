@@ -101,10 +101,13 @@ export default function BenefitsSection() {
                 <div className="absolute inset-0 rounded-full border-8 border-amber-900 shadow-2xl"></div>
                 <div className="absolute inset-2 rounded-full overflow-hidden">
                   <Image
-                    src="/images/team/benefits.jpg"
+                    src="/images/team/benefits.webp"
                     alt="Imus United FC - Team in Action"
                     fill
                     className="object-cover rounded-full"
+                    sizes="(max-width: 768px) 256px, (max-width: 1024px) 320px, 384px"
+                    quality={80}
+                    loading="lazy"
                   />
                 </div>
                 {/* Play Button Overlay */}

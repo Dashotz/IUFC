@@ -21,9 +21,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <main className="min-h-screen">{children}</main>
+    <html lang="en" className="overflow-x-hidden">
+      <body className={`${inter.className} overflow-x-hidden`}>
+        <main className="min-h-screen overflow-x-hidden">{children}</main>
         <Footer />
         <ScrollToTop />
       </body>

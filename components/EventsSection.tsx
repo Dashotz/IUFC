@@ -12,7 +12,7 @@ const events = [
     date: 'JAN 17, 2026',
     time: 'START 06:00 AM - UNTIL FINISH',
     price: 600,
-    image: '/images/team/event2.jpg',
+    image: '/images/team/event2.webp',
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const events = [
     date: 'DEC 07, 2025',
     time: 'KICK OFF 08:00 AM | CALL TIME 07:30 AM',
     price: 500,
-    image: '/images/team/event1.jpg',
+    image: '/images/team/event1.webp',
   },
 ]
 
@@ -31,10 +31,13 @@ export default function EventsSection() {
       {/* Blurred Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/team/event.jpg"
+          src="/images/team/event.webp"
           alt="Football Field Background"
           fill
           className="object-cover"
+          quality={70}
+          sizes="100vw"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
       </div>
@@ -146,6 +149,9 @@ export default function EventsSection() {
                       alt={event.title}
                       fill
                       className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 384px"
+                      quality={75}
+                      loading="lazy"
                     />
                   </div>
                   {/* Diagonal cut effect */}

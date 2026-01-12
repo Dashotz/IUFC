@@ -22,6 +22,8 @@ export default function Footer() {
                 width={50}
                 height={50}
                 className="object-contain"
+                sizes="50px"
+                quality={90}
               />
               <span className="text-2xl font-bold text-white">IMUS UNITED FC</span>
             </Link>

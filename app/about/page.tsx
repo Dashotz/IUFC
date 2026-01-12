@@ -3,7 +3,7 @@ import AboutContent from '@/components/about/AboutContent'
 
 export default function About() {
   return (
-    <>
+    <div className="overflow-x-hidden w-full">
       {/* Hero Section with Navigation */}
       <div id="home">
         <Hero />
@@ -14,6 +14,6 @@ export default function About() {
 
       {/* About Content */}
       <AboutContent />
-    </>
+    </div>
   )
 }

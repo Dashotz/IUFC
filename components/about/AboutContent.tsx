@@ -45,10 +45,13 @@ export default function AboutContent() {
               className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-2xl"
             >
               <Image
-                src="/images/team/banner1.jpg"
+                src="/images/team/banner1.webp"
                 alt="Imus United FC - Team in Action"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={75}
+                loading="lazy"
               />
             </motion.div>
 
@@ -112,10 +115,13 @@ export default function AboutContent() {
               className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-2xl order-1 lg:order-2"
             >
               <Image
-                src="/images/team/banner2.jpg"
+                src="/images/team/banner2.webp"
                 alt="Imus United FC - Team Celebration"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={75}
+                loading="lazy"
               />
             </motion.div>
           </div>

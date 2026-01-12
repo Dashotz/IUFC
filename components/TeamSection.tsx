@@ -8,28 +8,28 @@ const teamMembers = [
     id: 1,
     name: 'Alexis "Lee" Geluz',
     role: 'FOUNDER IMUS UNITED FC',
-    image: '/images/coaches/lee.jpg',
+    image: '/images/coaches/lee.webp',
     facebook: 'https://www.facebook.com/kaleeboyan',
   },
   {
     id: 2,
     name: 'Kingnoel "Ino" Sanvicente',
     role: 'COACH',
-    image: '/images/coaches/ino.jpg',
+    image: '/images/coaches/ino.webp',
     facebook: 'https://www.facebook.com/kingnoel.encio.sanvicente',
   },
   {
     id: 3,
     name: 'Karlo Mampolino',
     role: 'COACH',
-    image: '/images/coaches/karlo.jpg',
+    image: '/images/coaches/karlo.webp',
     facebook: 'https://www.facebook.com/karugzz',
   },
   {
     id: 4,
     name: 'Jovel "Jov" Paulo Bautista',
     role: 'COACH',
-    image: '/images/coaches/jovel.jpg',
+    image: '/images/coaches/jovel.webp',
     facebook: 'https://www.facebook.com/jovelpaulo',
   },
 ]
@@ -66,12 +66,15 @@ export default function TeamSection() {
                    >
                      {/* Member Image */}
                      <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-lg">
-                       <Image
-                         src={member.image}
-                         alt={member.name}
-                         fill
-                         className="object-cover group-hover:scale-110 transition-transform duration-300"
-                       />
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        quality={80}
+                        loading="lazy"
+                      />
                        {/* Facebook Icon Overlay */}
                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                          <motion.a
