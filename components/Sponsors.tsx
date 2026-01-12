@@ -2,27 +2,25 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { images } from '@/app/assets/images'
-import type { StaticImageData } from 'next/image'
 
 interface Sponsor {
   name: string
-  logo?: string | StaticImageData
+  logo?: string
 }
 
 // Add your sponsor names/logos here
 const sponsors: Sponsor[] = [
-  { name: 'EFX', logo: images.sponsors.efx },
+  { name: 'EFX', logo: '/images/sponsors/efx.png' },
   { name: 'Parents' },
   { name: 'Volunteers' },
-  { name: 'EFX', logo: images.sponsors.efx },
+  { name: 'EFX', logo: '/images/sponsors/efx.png' },
   { name: 'Parents' },
   { name: 'Volunteers' },
 ]
 
 export default function Sponsors() {
   // Duplicate sponsors multiple times for seamless infinite scroll
-  const duplicatedSponsors = Array(4).fill(sponsors).flat()
+  const duplicatedSponsors = [...sponsors, ...sponsors, ...sponsors, ...sponsors]
   
   // Calculate the distance to move (one set of sponsors)
   // Each sponsor is w-48 (192px) + gap-16 (64px) = 256px per sponsor
@@ -71,14 +69,13 @@ export default function Sponsors() {
                     : 'bg-gray-100 border-gray-300 hover:border-gray-400'
                 }`}>
                   {sponsor.logo ? (
-                    <div className="relative w-full h-full max-w-[120px] max-h-[60px]">
-                      <Image
-                        src={sponsor.logo}
-                        alt={sponsor.name}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
+                    <Image
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      width={120}
+                      height={60}
+                      className="max-w-full max-h-full object-contain"
+                    />
                   ) : (
                     <div className="flex flex-col items-center gap-2">
                       {sponsor.name === 'Parents' && (

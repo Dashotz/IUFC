@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { images } from '@/app/assets/images'
 
 const events = [
   {
@@ -13,7 +12,7 @@ const events = [
     date: 'JAN 17, 2026',
     time: 'START 06:00 AM - UNTIL FINISH',
     price: 600,
-    image: images.team.event2,
+    image: '/images/team/event2.jpg',
   },
   {
     id: 2,
@@ -22,7 +21,7 @@ const events = [
     date: 'DEC 07, 2025',
     time: 'KICK OFF 08:00 AM | CALL TIME 07:30 AM',
     price: 500,
-    image: images.team.event1,
+    image: '/images/team/event1.jpg',
   },
 ]
 
@@ -32,7 +31,7 @@ export default function EventsSection() {
       {/* Blurred Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={images.team.event}
+          src="/images/team/event.jpg"
           alt="Football Field Background"
           fill
           className="object-cover"

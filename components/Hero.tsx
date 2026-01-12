@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { images } from '@/app/assets/images'
 
 export default function Hero() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -42,7 +41,7 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={images.global.imageBg}
+          src="/images/global/image-bg.jpg"
           alt="Imus United Football Club"
           fill
           className="object-cover"
@@ -66,7 +65,7 @@ export default function Hero() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/" className="flex items-center gap-3">
                 <Image
-                  src={images.global.logo}
+                  src="/images/global/logo.png"
                   alt="Imus United Football Club Logo"
                   width={80}
                   height={80}

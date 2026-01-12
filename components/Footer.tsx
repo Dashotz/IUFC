@@ -4,12 +4,13 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { images } from '@/app/assets/images'
 
 // Dynamically import the map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./MapComponent'), { ssr: false })
 
 export default function Footer() {
+
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12 md:py-16">
@@ -18,7 +19,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <Image
-                src={images.global.logo}
+                src="/images/global/logo.png"
                 alt="Imus United Football Club Logo"
                 width={50}
                 height={50}

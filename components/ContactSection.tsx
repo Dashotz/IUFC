@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { images } from '@/app/assets/images'
 
 export default function ContactSection() {
   return (
@@ -11,7 +10,7 @@ export default function ContactSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={images.team.join}
+          src="/images/team/join.jpg"
           alt="Join Us Background"
           fill
           className="object-cover"

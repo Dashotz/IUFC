@@ -2,35 +2,34 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { images } from '@/app/assets/images'
 
 const teamMembers = [
   {
     id: 1,
     name: 'Alexis "Lee" Geluz',
     role: 'FOUNDER IMUS UNITED FC',
-    image: images.coaches.lee,
+    image: '/images/coaches/lee.jpg',
     facebook: 'https://www.facebook.com/kaleeboyan',
   },
   {
     id: 2,
     name: 'Kingnoel "Ino" Sanvicente',
     role: 'COACH',
-    image: images.coaches.ino,
+    image: '/images/coaches/ino.jpg',
     facebook: 'https://www.facebook.com/kingnoel.encio.sanvicente',
   },
   {
     id: 3,
     name: 'Karlo Mampolino',
     role: 'COACH',
-    image: images.coaches.karlo,
+    image: '/images/coaches/karlo.jpg',
     facebook: 'https://www.facebook.com/karugzz',
   },
   {
     id: 4,
     name: 'Jovel "Jov" Paulo Bautista',
     role: 'COACH',
-    image: images.coaches.jovel,
+    image: '/images/coaches/jovel.jpg',
     facebook: 'https://www.facebook.com/jovelpaulo',
   },
 ]

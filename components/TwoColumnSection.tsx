@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { images } from '@/app/assets/images'
 
 export default function TwoColumnSection() {
   return (
@@ -21,7 +20,7 @@ export default function TwoColumnSection() {
             {/* Top Left Image */}
             <div className="absolute top-0 left-0 w-[60%] h-[55%] z-10 rounded-lg shadow-xl overflow-hidden">
               <Image
-                src={images.team.banner2}
+                src="/images/team/banner2.jpg"
                 alt="Imus United FC - Team in Action"
                 fill
                 className="object-cover w-full h-full"
@@ -31,7 +30,7 @@ export default function TwoColumnSection() {
             {/* Bottom Right Image */}
             <div className="absolute bottom-0 right-0 w-[60%] h-[55%] z-10 rounded-lg shadow-xl overflow-hidden">
               <Image
-                src={images.team.banner1}
+                src="/images/team/banner1.jpg"
                 alt="Imus United FC - Match Action"
                 fill
                 className="object-cover w-full h-full"
@@ -103,7 +102,7 @@ export default function TwoColumnSection() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
                   <Image
-                    src={images.coaches.lee}
+                    src="/images/coaches/lee.jpg"
                     alt="Founder"
                     width={64}
                     height={64}
