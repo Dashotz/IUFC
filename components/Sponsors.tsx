@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface Sponsor {
   name: string
@@ -9,12 +10,12 @@ interface Sponsor {
 
 // Add your sponsor names/logos here
 const sponsors: Sponsor[] = [
-  { name: 'Sponsor 1' },
-  { name: 'Sponsor 2' },
-  { name: 'Sponsor 3' },
-  { name: 'Sponsor 4' },
-  { name: 'Sponsor 5' },
-  { name: 'Sponsor 6' },
+  { name: 'EFX', logo: '/images/sponsors/efx.png' },
+  { name: 'Parents' },
+  { name: 'Volunteers' },
+  { name: 'EFX', logo: '/images/sponsors/efx.png' },
+  { name: 'Parents' },
+  { name: 'Volunteers' },
 ]
 
 export default function Sponsors() {
@@ -28,7 +29,7 @@ export default function Sponsors() {
   const scrollDistance = sponsors.length * (itemWidth + gap)
 
   return (
-    <section className="bg-gray-900 py-12 overflow-hidden w-full">
+    <section className="bg-[#0a1628] py-12 overflow-hidden w-full">
       <div className="w-full">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -60,15 +61,43 @@ export default function Sponsors() {
                 key={`${sponsor.name}-${index}`}
                 className="flex-shrink-0 w-48 h-24 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
               >
-                <div className="w-full h-full bg-white/10 rounded-lg flex items-center justify-center p-6 border border-white/20 hover:border-white/40 transition-colors">
+                <div className={`w-full h-full rounded-lg flex flex-col items-center justify-center p-6 border transition-colors ${
+                  sponsor.name === 'Parents' 
+                    ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300 hover:border-blue-400' 
+                    : sponsor.name === 'Volunteers'
+                    ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-300 hover:border-green-400'
+                    : 'bg-gray-100 border-gray-300 hover:border-gray-400'
+                }`}>
                   {sponsor.logo ? (
-                    <img
+                    <Image
                       src={sponsor.logo}
                       alt={sponsor.name}
+                      width={120}
+                      height={60}
                       className="max-w-full max-h-full object-contain"
                     />
                   ) : (
-                    <span className="text-white text-sm font-semibold text-center">{sponsor.name}</span>
+                    <div className="flex flex-col items-center gap-2">
+                      {sponsor.name === 'Parents' && (
+                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      )}
+                      {sponsor.name === 'Volunteers' && (
+                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      )}
+                      <span className={`text-sm font-bold text-center uppercase tracking-wide ${
+                        sponsor.name === 'Parents' 
+                          ? 'text-blue-700' 
+                          : sponsor.name === 'Volunteers'
+                          ? 'text-green-700'
+                          : 'text-gray-900'
+                      }`}>
+                        {sponsor.name}
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>
