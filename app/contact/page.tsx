@@ -1,87 +1,144 @@
+'use client'
+
+import { motion } from 'framer-motion'
+
 export default function Contact() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8">Contact Us</h1>
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-4xl font-bold mb-8"
+      >
+        Contact Us
+      </motion.h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+        >
           <h2 className="text-2xl font-semibold mb-4">Get in Touch</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             Have a question or want to reach out? We'd love to hear from you!
           </p>
           <div className="space-y-2">
-            <p><strong>Email:</strong> contact@iufc.com</p>
-            <p><strong>Phone:</strong> (555) 123-4567</p>
-            <p><strong>Address:</strong> 123 Sports Avenue, City, State 12345</p>
+            <p><strong>Email:</strong> contact@imusunitedfc.com</p>
+            <p><strong>Phone:</strong> +63 XXX XXX XXXX</p>
+            <p><strong>Address:</strong> Imus, Cavite, Philippines</p>
           </div>
-        </div>
+        </motion.div>
         
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+        >
           <h2 className="text-2xl font-semibold mb-4">Follow Us</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             Stay connected with us on social media for the latest updates.
           </p>
           <div className="space-y-2">
-            <a href="#" className="block text-primary-600 dark:text-primary-400 hover:underline">
+            <motion.a
+              href="https://www.facebook.com/imusunitedfootballclub"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05, x: 5 }}
+              className="block text-primary-600 dark:text-primary-400 hover:underline"
+            >
               Facebook
-            </a>
-            <a href="#" className="block text-primary-600 dark:text-primary-400 hover:underline">
+            </motion.a>
+            <motion.a
+              href="#"
+              whileHover={{ scale: 1.05, x: 5 }}
+              className="block text-primary-600 dark:text-primary-400 hover:underline"
+            >
               Twitter
-            </a>
-            <a href="#" className="block text-primary-600 dark:text-primary-400 hover:underline">
+            </motion.a>
+            <motion.a
+              href="#"
+              whileHover={{ scale: 1.05, x: 5 }}
+              className="block text-primary-600 dark:text-primary-400 hover:underline"
+            >
               Instagram
-            </a>
-            <a href="#" className="block text-primary-600 dark:text-primary-400 hover:underline">
+            </motion.a>
+            <motion.a
+              href="#"
+              whileHover={{ scale: 1.05, x: 5 }}
+              className="block text-primary-600 dark:text-primary-400 hover:underline"
+            >
               YouTube
-            </a>
+            </motion.a>
           </div>
-        </div>
+        </motion.div>
       </div>
       
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+      >
         <h2 className="text-2xl font-semibold mb-4">Send us a Message</h2>
         <form className="space-y-4">
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <label htmlFor="name" className="block mb-2 font-medium">
               Name
             </label>
             <input
               type="text"
               id="name"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               placeholder="Your name"
             />
-          </div>
-          <div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
             <label htmlFor="email" className="block mb-2 font-medium">
               Email
             </label>
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               placeholder="your.email@example.com"
             />
-          </div>
-          <div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             <label htmlFor="message" className="block mb-2 font-medium">
               Message
             </label>
             <textarea
               id="message"
               rows={6}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               placeholder="Your message"
             ></textarea>
-          </div>
-          <button
+          </motion.div>
+          <motion.button
             type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
           >
             Send Message
-          </button>
+          </motion.button>
         </form>
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -84,17 +84,17 @@ export default function AnimatedHero() {
 
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {typeof window !== 'undefined' && [...Array(20)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-primary-400 rounded-full"
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
               opacity: 0,
             }}
             animate={{
-              y: [null, Math.random() * window.innerHeight],
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080)],
               opacity: [0, 0.5, 0],
             }}
             transition={{

@@ -1,15 +1,21 @@
-# IUFC Sports Team Blog
+# Imus United Football Club - Official Blog
 
-A modern, responsive blog website for a sports team built with Next.js and deployed on Netlify.
+A modern, animated blog website for Imus United Football Club built with Next.js, featuring 3D elements, smooth animations, and deployed on Netlify.
 
 ## Features
 
-- 🎨 Modern, responsive design with Tailwind CSS
-- 📱 Mobile-friendly layout
-- 🌙 Dark mode support
-- ⚡ Fast static site generation
-- 📝 Blog post system
-- 🚀 Optimized for Netlify deployment
+- Modern, responsive design with Tailwind CSS
+- Mobile-friendly layout
+- Dark mode support
+- Fast static site generation
+- Blog post system with images
+- Smooth animations with Framer Motion
+- 3D interactive elements with React Three Fiber
+- Image gallery with modal view
+- Optimized image handling
+- Optimized for Netlify deployment
+- Scroll to top button
+- Animated hero section with 3D sphere
 
 ## Getting Started
 
@@ -69,11 +75,22 @@ The project uses Tailwind CSS. Customize colors in `tailwind.config.ts`:
 
 ### Team Information
 
-Update the following files with your team's information:
+The site is already configured for **Imus United Football Club**. Update the following files if needed:
 - `app/about/page.tsx` - Team information
 - `app/contact/page.tsx` - Contact details
 - `components/Header.tsx` - Team name/logo
-- `components/Footer.tsx` - Footer links
+- `components/Footer.tsx` - Footer links (includes Facebook link)
+
+### Adding Real Images
+
+Replace the placeholder images in:
+- `app/page.tsx` - Gallery images (currently using Unsplash placeholders)
+- `lib/posts.ts` - Blog post images
+
+You can:
+1. Add images to the `public/images/` directory
+2. Use the Facebook Graph API to fetch images from the team's Facebook page
+3. Update image URLs in the code to point to your image sources
 
 ## Deployment to Netlify
 
@@ -117,7 +134,20 @@ The `netlify.toml` file is already configured with:
 - **Next.js 14** - React framework with App Router
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Utility-first CSS framework
+- **Framer Motion** - Animation library for React
+- **React Three Fiber** - 3D graphics library
+- **Three.js** - 3D library
+- **@react-three/drei** - Useful helpers for React Three Fiber
 - **Netlify** - Hosting and deployment
+
+## Animation Features
+
+- **Hero Section**: 3D rotating sphere with animated background particles
+- **Page Transitions**: Smooth fade and slide animations on page load
+- **Card Animations**: Hover effects and staggered entrance animations
+- **Image Gallery**: Modal view with smooth transitions
+- **Scroll Animations**: Elements animate as they come into view
+- **Interactive Elements**: Hover and tap animations throughout
 
 ## License
 
