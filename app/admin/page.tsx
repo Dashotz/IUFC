@@ -9,6 +9,8 @@ import LoginForm from './components/LoginForm'
 import EventForm from './components/EventForm'
 import EventList from './components/EventList'
 import AttendanceModal from './components/AttendanceModal'
+import DeleteModal from './components/DeleteModal'
+import AlertModal from './components/AlertModal'
 import { AdminEvent } from './types'
 
 export default function AdminPage() {
@@ -21,7 +23,11 @@ export default function AdminPage() {
     const [editingId, setEditingId] = useState<number | null>(null)
     const [events, setEvents] = useState<AdminEvent[]>([])
     const [showCoach, setShowCoach] = useState(false)
-    const [viewAttendanceEvent, setViewAttendanceEvent] = useState<{ id: number, title: string } | null>(null)
+    const [viewAttendanceEvent, setViewAttendanceEvent] = useState<AdminEvent | null>(null)
+    const [isFormOpen, setIsFormOpen] = useState(false)
+    const [deleteTarget, setDeleteTarget] = useState<{ id: number, imageUrl: string | null } | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [alertState, setAlertState] = useState<{ isOpen: boolean, type: 'success' | 'error' | 'info', title?: string, message?: string }>({ isOpen: false, type: 'info' })
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const [formData, setFormData] = useState({
@@ -81,7 +87,7 @@ export default function AdminPage() {
             coach: event.coach || ''
         })
         setShowCoach(!!event.coach)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setIsFormOpen(true)
     }
 
     const cancelEdit = () => {
@@ -96,6 +102,7 @@ export default function AdminPage() {
             coach: ''
         })
         setShowCoach(false)
+        setIsFormOpen(false)
         if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
@@ -120,7 +127,6 @@ export default function AdminPage() {
             }
 
             // Clear title if switching to tournament (optional, maybe keep it?)
-            // If switching TO tournament, the user usually types a name. We can clear default training names.
             if (name === 'event_type' && value === 'tournament' && prev.title.includes('Training')) {
                 newData.title = ''
             }
@@ -181,7 +187,7 @@ export default function AdminPage() {
 
         } catch (error: any) {
             console.error('Error uploading image:', error)
-            alert('Error uploading image: ' + error.message)
+            setAlertState({ isOpen: true, type: 'error', message: 'Error uploading image: ' + error.message })
         } finally {
             setUploading(false)
         }
@@ -239,49 +245,52 @@ export default function AdminPage() {
             // Reset form
             cancelEdit() // This resets form and editingId
 
-            alert(editingId ? 'Event updated successfully!' : 'Event created successfully!')
+            setAlertState({ isOpen: true, type: 'success', title: 'Success', message: editingId ? 'Event updated successfully!' : 'Event created successfully!' })
 
         } catch (error: any) {
             console.error('Error saving event:', error)
-            alert('Error saving event: ' + error.message)
+            setAlertState({ isOpen: true, type: 'error', message: 'Error saving event: ' + error.message })
         } finally {
             setLoading(false)
         }
     }
 
-    const handleDelete = async (id: number, imageUrl: string | null) => {
-        if (!confirm('Are you sure you want to delete this event?')) return
+    const handleDelete = (id: number, imageUrl: string | null) => {
+        setDeleteTarget({ id, imageUrl })
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return
+
+        const { id, imageUrl } = deleteTarget
+        setIsDeleting(true)
 
         try {
-            // 1. Delete the DB record
-            const { error } = await supabase
-                .from('events')
-                .delete()
-                .eq('id', id)
+            // 1. Delete Attendance
+            const { error: attendanceError } = await supabase.from('attendance_records').delete().eq('event_id', id)
+            if (attendanceError) console.error('Error deleting attendance records:', attendanceError)
 
+            // 2. Delete Event
+            const { error, data } = await supabase.from('events').delete().eq('id', id).select()
             if (error) throw error
+            if (!data || data.length === 0) throw new Error("Deletion failed. Policy restriction.")
 
-            // 2. Delete the Image from Storage if it exists and is not default
-            // Check if imageUrl is from our bucket
+            // 3. Delete Image
             if (imageUrl && imageUrl.includes('supabase') && !imageUrl.includes('default')) {
-                // Extract path from URL
-                // URL format: .../storage/v1/object/public/images/training/filename.webp
-                // We need 'training/filename.webp'
                 const urlParts = imageUrl.split('/images/')
                 if (urlParts.length > 1) {
-                    const storagePath = urlParts[1]
-                    const { error: storageError } = await supabase.storage
-                        .from('images')
-                        .remove([storagePath])
-
-                    if (storageError) console.error('Error deleting image:', storageError)
+                    await supabase.storage.from('images').remove([urlParts[1]])
                 }
             }
 
             fetchEvents()
+            setDeleteTarget(null)
+            setAlertState({ isOpen: true, type: 'success', title: 'Deleted', message: 'Event successfully deleted.' })
         } catch (error: any) {
             console.error('Error deleting event:', error)
-            alert('Error deleting event: ' + error.message)
+            setAlertState({ isOpen: true, type: 'error', message: error.message })
+        } finally {
+            setIsDeleting(false)
         }
     }
 
@@ -302,7 +311,7 @@ export default function AdminPage() {
 
         } catch (error: any) {
             console.error('Error generating attendance link:', error)
-            alert('Failed to generate link: ' + error.message)
+            setAlertState({ isOpen: true, type: 'error', message: 'Failed to generate link: ' + error.message })
         }
     }
 
@@ -350,11 +359,11 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a1628] text-white relative flex flex-col font-sans">
+        <div className="h-screen overflow-hidden bg-[#0a1628] text-white relative flex flex-col font-sans">
             <AdminBackground />
 
             {/* Navbar */}
-            <nav className="bg-black/20 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+            <nav className="bg-black/20 backdrop-blur-md border-b border-white/5 sticky top-0 z-50 shrink-0">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-red-600 rounded-lg shadow-lg shadow-blue-900/50"></div>
@@ -369,42 +378,110 @@ export default function AdminPage() {
                 </div>
             </nav>
 
-            <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10 flex-grow">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 h-full">
-                    {/* Add Event Form */}
-                    <EventForm
-                        formData={formData}
-                        setFormData={setFormData}
-                        handleInputChange={handleInputChange}
-                        handleSubmit={handleSubmit}
-                        handleImageUpload={handleImageUpload}
-                        uploading={uploading}
-                        loading={loading}
-                        editingId={editingId}
-                        cancelEdit={cancelEdit}
-                        fileInputRef={fileInputRef}
-                        showCoach={showCoach}
-                        setShowCoach={setShowCoach}
-                    />
-
-                    {/* Existing Events List */}
-                    <EventList
-                        events={events}
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
-                        generateAttendanceLink={generateAttendanceLink}
-                        handleViewAttendance={(id, title) => setViewAttendanceEvent({ id, title })}
-                    />
+            <main className="container mx-auto px-4 sm:px-6 py-6 relative z-10 flex-1 overflow-hidden flex flex-col">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 shrink-0">
+                    <div>
+                        <h2 className="text-2xl font-black text-white tracking-tight">EVENTS MANAGEMENT</h2>
+                        <p className="text-gray-400 text-xs mt-1">Manage your team's schedule and tournaments</p>
+                    </div>
+                    <button
+                        onClick={() => {
+                            setEditingId(null)
+                            setFormData({
+                                title: '',
+                                event_type: 'tournament',
+                                location: '',
+                                start_date: '',
+                                start_time: '',
+                                image_url: '/images/team/event1.webp',
+                                coach: ''
+                            })
+                            setIsFormOpen(true)
+                        }}
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-900/40 transform transition-all hover:scale-105 flex items-center gap-2"
+                    >
+                        <span className="text-lg leading-none">+</span> CREATE NEW EVENT
+                    </button>
                 </div>
+
+                {/* Grid List */}
+                <EventList
+                    events={events}
+                    handleEdit={handleEdit}
+                    handleDelete={handleDelete}
+                    generateAttendanceLink={generateAttendanceLink}
+                    handleViewAttendance={(event) => setViewAttendanceEvent(event)}
+                />
+
+                {/* Form Modal */}
+                {isFormOpen && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={cancelEdit}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+                        />
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            className="bg-[#0a1628] w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar rounded-2xl border border-gray-700 shadow-2xl relative z-10 flex flex-col"
+                        >
+                            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-gray-900/50 sticky top-0 backdrop-blur-md z-20">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-wide">
+                                    {editingId ? 'Edit Event' : 'New Event'}
+                                </h2>
+                                <button onClick={cancelEdit} className="text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg">
+                                    ✕
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                <EventForm
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                    handleInputChange={handleInputChange}
+                                    handleSubmit={handleSubmit}
+                                    handleImageUpload={handleImageUpload}
+                                    uploading={uploading}
+                                    loading={loading}
+                                    editingId={editingId}
+                                    cancelEdit={cancelEdit}
+                                    fileInputRef={fileInputRef}
+                                    showCoach={showCoach}
+                                    setShowCoach={setShowCoach}
+                                />
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
 
                 {/* Attendance Modal */}
                 {viewAttendanceEvent && (
                     <AttendanceModal
-                        eventId={viewAttendanceEvent.id}
-                        eventTitle={viewAttendanceEvent.title}
+                        event={viewAttendanceEvent}
                         onClose={() => setViewAttendanceEvent(null)}
                     />
                 )}
+
+                {/* Delete Confirmation Modal */}
+                <DeleteModal
+                    isOpen={!!deleteTarget}
+                    onClose={() => setDeleteTarget(null)}
+                    onConfirm={confirmDelete}
+                    isDeleting={isDeleting}
+                />
+
+                <AlertModal
+                    isOpen={alertState.isOpen}
+                    onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+                    title={alertState.title}
+                    message={alertState.message}
+                    type={alertState.type}
+                />
             </main>
         </div>
     )

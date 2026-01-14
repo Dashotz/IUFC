@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
+import { AdminEvent } from '../types'
 
 interface AttendanceRecord {
     id: number
@@ -9,21 +10,21 @@ interface AttendanceRecord {
 }
 
 interface AttendanceModalProps {
-    eventId: number
-    eventTitle: string
+    event: AdminEvent
     onClose: () => void
 }
 
-export default function AttendanceModal({ eventId, eventTitle, onClose }: AttendanceModalProps) {
+export default function AttendanceModal({ event, onClose }: AttendanceModalProps) {
     const [attendees, setAttendees] = useState<AttendanceRecord[]>([])
     const [loading, setLoading] = useState(true)
+    const [copyText, setCopyText] = useState('COPY LIST')
 
     useEffect(() => {
         async function fetchAttendees() {
             const { data, error } = await supabase
                 .from('attendance_records')
                 .select('*')
-                .eq('event_id', eventId)
+                .eq('event_id', event.id)
                 .order('created_at', { ascending: false })
 
             if (error) {
@@ -35,7 +36,37 @@ export default function AttendanceModal({ eventId, eventTitle, onClose }: Attend
         }
 
         fetchAttendees()
-    }, [eventId])
+    }, [event.id])
+
+    const handleCopy = () => {
+        const dateStr = new Date(event.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+
+        // Add event type (e.g. " Training" or " Tournament")
+        let typeStr = ''
+        if (event.event_type) {
+            typeStr = ' ' + event.event_type.charAt(0).toUpperCase() + event.event_type.slice(1)
+        }
+
+        let timeStr = event.start_time
+        // Convert to 12h format
+        if (timeStr && timeStr.includes(':')) {
+            const [h, m] = timeStr.split(':')
+            const hour = parseInt(h)
+            const ampm = hour >= 12 ? 'PM' : 'AM'
+            const hour12 = hour % 12 || 12
+            timeStr = `${hour12}:${m} ${ampm}`
+        }
+
+        const coachLine = event.coach ? event.coach : 'Coaches'
+
+        const attendeeList = attendees.map((a, i) => `${i + 1}. ${a.attendee_name}`).join('\n')
+
+        const text = `${dateStr}${typeStr}\n${event.location}\n${timeStr}\n${coachLine}\n\nAttendance:\n${attendeeList}`
+
+        navigator.clipboard.writeText(text)
+        setCopyText('COPIED!')
+        setTimeout(() => setCopyText('COPY LIST'), 2000)
+    }
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -59,7 +90,7 @@ export default function AttendanceModal({ eventId, eventTitle, onClose }: Attend
                 <div className="p-6 border-b border-gray-700 bg-gray-800/50 flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-bold text-white mb-1">Attendance List</h3>
-                        <p className="text-sm text-blue-400 font-medium">{eventTitle}</p>
+                        <p className="text-sm text-blue-400 font-medium">{event.title}</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -104,15 +135,11 @@ export default function AttendanceModal({ eventId, eventTitle, onClose }: Attend
                     <span className="text-xs text-gray-500">Total: {attendees.length}</span>
                     <div className="flex gap-2">
                         <button
-                            onClick={() => {
-                                const text = attendees.map(a => `${a.attendee_name} - ${new Date(a.created_at).toLocaleString()}`).join('\n')
-                                navigator.clipboard.writeText(text)
-                                alert('List copied to clipboard!')
-                            }}
+                            onClick={handleCopy}
                             disabled={attendees.length === 0}
-                            className="px-3 py-1.5 text-xs font-bold text-gray-300 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-1.5 text-xs font-bold text-gray-300 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px]"
                         >
-                            COPY LIST
+                            {copyText}
                         </button>
                         <button
                             onClick={() => {
@@ -124,7 +151,7 @@ export default function AttendanceModal({ eventId, eventTitle, onClose }: Attend
                                 const link = document.createElement('a')
                                 const url = URL.createObjectURL(blob)
                                 link.setAttribute('href', url)
-                                link.setAttribute('download', `${eventTitle}_attendance.csv`)
+                                link.setAttribute('download', `${event.title}_attendance.csv`)
                                 link.style.visibility = 'hidden'
                                 document.body.appendChild(link)
                                 link.click()
