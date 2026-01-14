@@ -3,51 +3,62 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabaseClient'
 
 interface Event {
   id: number
   title: string
   location: string
-  date: string
-  time: string
-  price: number | string
-  image: string
+  start_date: string // mapped from DB start_date
+  start_time: string // mapped from DB start_time
+  image_url: string // mapped from DB image_url
+  event_type: 'training' | 'tournament' // from DB
 }
 
-const trainingEvents: Event[] = [
-  {
-    id: 101,
-    title: 'REGULAR TRAINING SESSION',
-    location: 'Statefield Sports Field',
-    date: 'EVERY WEEKEND',
-    time: '07:00 AM - 09:00 AM',
-    price: 'MEMBERS ONLY',
-    image: '/images/training/training1.webp', // Assuming this exists or using a fallback
-  },
-]
-
-const tournamentEvents: Event[] = [
-  {
-    id: 1,
-    title: 'ROPA CUP - 1st Tournament 2026',
-    location: 'Statefield Sports Field, Sta Rosa Laguna',
-    date: 'JAN 17, 2026',
-    time: 'START 06:00 AM - UNTIL FINISH',
-    price: 600,
-    image: '/images/team/event2.webp',
-  },
-  {
-    id: 2,
-    title: 'OJAMS SPORTS MINI FOOTBALL FIESTA',
-    location: 'AMPHITHEATER METRO GATE SILANG CAVITE',
-    date: 'DEC 07, 2025',
-    time: 'KICK OFF 08:00 AM | CALL TIME 07:30 AM',
-    price: 500,
-    image: '/images/team/event1.webp',
-  },
-]
-
 export default function EventsSection() {
+  const [trainingEvents, setTrainingEvents] = useState<Event[]>([])
+  const [tournamentEvents, setTournamentEvents] = useState<Event[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        if (data) {
+          // Map DB fields to Component fields if needed, or use directly
+          // DB: title, location, start_date, start_time, price, image_url, event_type
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const formattedEvents: Event[] = data.map((evt: any) => ({
+            id: evt.id,
+            title: evt.title,
+            location: evt.location,
+            start_date: evt.start_date,
+            start_time: evt.start_time,
+            image_url: evt.image_url,
+            event_type: evt.event_type
+          }))
+
+          setTrainingEvents(formattedEvents.filter(e => e.event_type === 'training'))
+          setTournamentEvents(formattedEvents.filter(e => e.event_type === 'tournament'))
+        }
+      } catch (err) {
+        console.error('Error loading events:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchEvents()
+  }, [])
+
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Blurred Background Image */}
@@ -78,9 +89,9 @@ export default function EventsSection() {
         </motion.div>
 
         {/* Two Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pl-0 sm:pl-4 xl:pl-0">
           {/* Training Section */}
-          <div>
+          <div className="flex flex-col">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -92,15 +103,21 @@ export default function EventsSection() {
               </h3>
             </motion.div>
 
-            <div className="space-y-6">
-              {trainingEvents.map((event, index) => (
-                <EventCard key={event.id} event={event} index={index} />
-              ))}
+            <div className="space-y-6 flex-grow ">
+              {isLoading ? (
+                <div className="text-white">Loading training schedules...</div>
+              ) : trainingEvents.length === 0 ? (
+                <div className="bg-white/10 p-6 rounded-lg text-white">No upcoming training sessions scheduled.</div>
+              ) : (
+                trainingEvents.map((event, index) => (
+                  <EventCard key={event.id} event={event} index={index} />
+                ))
+              )}
             </div>
           </div>
 
           {/* Tournaments Section */}
-          <div>
+          <div className="flex flex-col">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -108,14 +125,20 @@ export default function EventsSection() {
               className="mb-8"
             >
               <h3 className="text-xl md:text-2xl font-bold text-yellow-400 uppercase tracking-wider border-l-4 border-yellow-400 pl-4">
-                EVENT TOURNAMENTS
+                TOURNAMENTS
               </h3>
             </motion.div>
 
-            <div className="space-y-6">
-              {tournamentEvents.map((event, index) => (
-                <EventCard key={event.id} event={event} index={index + trainingEvents.length} />
-              ))}
+            <div className="space-y-6 flex-grow">
+              {isLoading ? (
+                <div className="text-white">Loading tournaments...</div>
+              ) : tournamentEvents.length === 0 ? (
+                <div className="bg-white/10 p-6 rounded-lg text-white">No upcoming tournaments scheduled.</div>
+              ) : (
+                tournamentEvents.map((event, index) => (
+                  <EventCard key={event.id} event={event} index={index + trainingEvents.length} />
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -130,12 +153,12 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }} // Reduced delay for smoother load
-      className="bg-white rounded-lg overflow-hidden shadow-2xl h-full"
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      className="bg-white rounded-lg overflow-hidden shadow-2xl h-full flex flex-col"
     >
       <div className="flex flex-col md:flex-row lg:flex-col xl:flex-row h-full">
         {/* Left Section - Event Details */}
-        <div className="flex-1 p-6 relative">
+        <div className="flex-1 p-6 relative flex flex-col justify-center">
           {/* Diagonal Green Stripe */}
           <div className="absolute top-0 left-0 w-24 h-24 bg-barca-red transform -rotate-45 -translate-x-12 -translate-y-12"></div>
 
@@ -184,7 +207,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-gray-700 text-xs md:text-sm font-semibold">{event.date}</p>
+                <p className="text-gray-700 text-xs md:text-sm font-semibold">{event.start_date}</p>
               </div>
 
               {/* Time */}
@@ -202,7 +225,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p className="text-gray-700 text-xs md:text-sm font-semibold">{event.time}</p>
+                <p className="text-gray-700 text-xs md:text-sm font-semibold">{event.start_time}</p>
               </div>
             </div>
           </div>
@@ -212,7 +235,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
         <div className="relative w-full md:w-64 lg:w-full xl:w-64 h-48 md:h-auto lg:h-48 xl:h-auto flex-shrink-0">
           <div className="absolute inset-0">
             <Image
-              src={event.image}
+              src={event.image_url}
               alt={event.title}
               fill
               className="object-cover"

@@ -35,3 +35,10 @@ body {
 .prose a:hover {
   color: var(--barca-red);
 }
+
+/* Calendar picker icon color for dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
