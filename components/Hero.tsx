@@ -34,6 +34,7 @@ export default function Hero() {
     { name: 'EVENTS', href: '#events' },
     { name: 'COACHES', href: '#coaches' },
     { name: 'CONTACT', href: '#contact' },
+    { name: 'ADMIN', href: '/admin' },
   ]
 
   return (
@@ -125,7 +126,7 @@ export default function Hero() {
                         // Let default behavior handle it
                       }
                     }}
-                    className="text-white hover:text-barca-red transition-colors font-semibold text-xs xl:text-sm uppercase tracking-wide relative group"
+                    className={`text-white hover:text-barca-red transition-colors font-semibold text-xs xl:text-sm uppercase tracking-wide relative group ${item.name === 'ADMIN' ? 'opacity-50 hover:opacity-100' : ''}`}
                   >
                     {item.name}
                     <motion.span
@@ -217,7 +218,7 @@ export default function Hero() {
                             // Let default behavior handle it
                           }
                         }}
-                        className="text-white hover:text-barca-red transition-colors font-semibold text-base uppercase tracking-wide block py-2"
+                        className={`text-white hover:text-barca-red transition-colors font-semibold text-base uppercase tracking-wide block py-2 ${item.name === 'ADMIN' ? 'opacity-50 hover:opacity-100' : ''}`}
                       >
                         {item.name}
                       </Link>
