@@ -5,6 +5,10 @@ import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
 
+export async function generateStaticParams() {
+    return []
+}
+
 interface TrainingEvent {
     id: number
     title: string
