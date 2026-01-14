@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabaseClient'
 import AdminBackground from './components/AdminBackground'
 import LoginForm from './components/LoginForm'
@@ -366,7 +367,13 @@ export default function AdminPage() {
             <nav className="bg-black/20 backdrop-blur-md border-b border-white/5 sticky top-0 z-50 shrink-0">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-red-600 rounded-lg shadow-lg shadow-blue-900/50"></div>
+                        <Image
+                            src="/images/global/logo.webp"
+                            alt="IUFC Logo"
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 object-contain drop-shadow-md"
+                        />
                         <h1 className="text-xl font-black tracking-wide">IUFC <span className="text-gray-400 font-normal">DASHBOARD</span></h1>
                     </div>
                     <button

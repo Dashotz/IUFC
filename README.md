@@ -61,12 +61,33 @@ All images are stored in the `public/images/` directory:
 
 Update image paths in components to reference images from the `public` folder.
 
+## Admin Dashboard & Backend
+
+Powered by **Supabase**, the custom-built Admin Dashboard provides full control over club operations.
+
+### Features
+- **Operations Center**: Secure, animated login dashboard for club administrators.
+- **Event Management**: CRUD capabilities for training sessions and tournaments, featuring:
+    - Automatic date/title formatting.
+    - Image uploads with client-side WebP conversion.
+- **Attendance System**:
+    - "Who's Going?" Transparency: Publicly viewable attendance lists.
+    - Smart Copy: One-click formatted attendance list generation for WhatsApp/Messenger.
+    - Secure Sign-up: Public attendance registration without login.
+- **Security**:
+    - Robust Row Level Security (RLS) policies.
+    - Protected Admin routes and actions.
+- **UI/UX**:
+    - Custom animated modals for alerts and confirmations.
+    - Glassmorphism design aesthetics.
+
 ## Technologies Used
 
 ### Core Framework
 - **Next.js 14** - React framework with App Router and static export
 - **React 18** - UI library
 - **TypeScript** - Type safety and better developer experience
+- **Supabase** - Backend-as-a-Service (Auth, Database, Storage)
 
 ### Styling & UI
 - **Tailwind CSS** - Utility-first CSS framework
