@@ -1,22 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
-// eslint-disable-next-line @next/next/no-img-element
-import Image from 'next/image'
-
-interface AdminEvent {
-    id: number
-    title: string
-    event_type: 'tournament' | 'training'
-    location: string
-    start_date: string
-    start_time: string
-    image_url: string
-    created_at: string
-}
+import AdminBackground from './components/AdminBackground'
+import LoginForm from './components/LoginForm'
+import EventForm from './components/EventForm'
+import EventList from './components/EventList'
+import AttendanceModal from './components/AttendanceModal'
+import { AdminEvent } from './types'
 
 export default function AdminPage() {
     const [session, setSession] = useState<any>(null)
@@ -25,7 +18,10 @@ export default function AdminPage() {
     const [errorMsg, setErrorMsg] = useState('')
     const [loading, setLoading] = useState(false)
     const [uploading, setUploading] = useState(false)
+    const [editingId, setEditingId] = useState<number | null>(null)
     const [events, setEvents] = useState<AdminEvent[]>([])
+    const [showCoach, setShowCoach] = useState(false)
+    const [viewAttendanceEvent, setViewAttendanceEvent] = useState<{ id: number, title: string } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const [formData, setFormData] = useState({
@@ -34,7 +30,8 @@ export default function AdminPage() {
         location: '',
         start_date: '',
         start_time: '',
-        image_url: '/images/team/event1.webp'
+        image_url: '/images/team/event1.webp',
+        coach: ''
     })
 
     useEffect(() => {
@@ -64,31 +61,42 @@ export default function AdminPage() {
             .from('events')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(20)
-
-        if (data) setEvents(data)
-        if (error) console.error('Error fetching events:', error.message)
-    }
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-        setErrorMsg('')
-
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        })
 
         if (error) {
-            setErrorMsg(error.message)
+            console.error('Error fetching events:', error)
+        } else {
+            setEvents(data || [])
         }
-
-        setLoading(false)
     }
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
+    const handleEdit = (event: AdminEvent) => {
+        setEditingId(event.id)
+        setFormData({
+            title: event.title,
+            event_type: event.event_type,
+            location: event.location,
+            start_date: event.start_date,
+            start_time: event.start_time,
+            image_url: event.image_url,
+            coach: event.coach || ''
+        })
+        setShowCoach(!!event.coach)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    const cancelEdit = () => {
+        setEditingId(null)
+        setFormData({
+            title: '',
+            event_type: 'tournament',
+            location: '',
+            start_date: '',
+            start_time: '',
+            image_url: '/images/team/event1.webp',
+            coach: ''
+        })
+        setShowCoach(false)
+        if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -97,26 +105,50 @@ export default function AdminPage() {
         setFormData(prev => {
             const newData = { ...prev, [name]: value }
 
-            // Auto-populate title for Training events when date changes
-            if (newData.event_type === 'training' && name === 'start_date' && value) {
+            // Auto-populate title if training + date selected
+            if (name === 'start_date' && newData.event_type === 'training' && value) {
                 const date = new Date(value)
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
                 newData.title = `${dayName} Training`
             }
 
-            // Re-trigger auto-population if switching TO training and a date exists
+            // Auto-populate title if type switched to training and date already exists
             if (name === 'event_type' && value === 'training' && newData.start_date) {
                 const date = new Date(newData.start_date)
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
                 newData.title = `${dayName} Training`
             }
 
-            // Clear title if switching to tournament so user can type
-            if (name === 'event_type' && value === 'tournament') {
+            // Clear title if switching to tournament (optional, maybe keep it?)
+            // If switching TO tournament, the user usually types a name. We can clear default training names.
+            if (name === 'event_type' && value === 'tournament' && prev.title.includes('Training')) {
                 newData.title = ''
             }
 
             return newData
+        })
+    }
+
+    const convertToWebP = async (file: File): Promise<Blob> => {
+        return new Promise((resolve, reject) => {
+            const img = new (window as any).Image()
+            img.onload = () => {
+                const canvas = document.createElement('canvas')
+                canvas.width = img.width
+                canvas.height = img.height
+                const ctx = canvas.getContext('2d')
+                if (!ctx) {
+                    reject(new Error('Canvas context not available'))
+                    return
+                }
+                ctx.drawImage(img, 0, 0)
+                canvas.toBlob((blob) => {
+                    if (blob) resolve(blob)
+                    else reject(new Error('Conversion failed'))
+                }, 'image/webp', 0.8)
+            }
+            img.onerror = reject
+            img.src = URL.createObjectURL(file)
         })
     }
 
@@ -148,162 +180,171 @@ export default function AdminPage() {
             setFormData(prev => ({ ...prev, image_url: publicUrl }))
 
         } catch (error: any) {
+            console.error('Error uploading image:', error)
             alert('Error uploading image: ' + error.message)
         } finally {
             setUploading(false)
         }
     }
 
-    const convertToWebP = (file: File): Promise<Blob> => {
-        return new Promise((resolve, reject) => {
-            const img = document.createElement('img')
-            img.onload = () => {
-                const canvas = document.createElement('canvas')
-                canvas.width = img.width
-                canvas.height = img.height
-                const ctx = canvas.getContext('2d')
-                if (!ctx) {
-                    reject(new Error('Could not get canvas context'))
-                    return
-                }
-                ctx.drawImage(img, 0, 0)
-                canvas.toBlob((blob) => {
-                    if (blob) resolve(blob)
-                    else reject(new Error('Conversion to WebP failed'))
-                }, 'image/webp', 0.8)
-            }
-            img.onerror = (e) => reject(e)
-            img.src = URL.createObjectURL(file)
-        })
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
 
-        const { error } = await supabase
-            .from('events')
-            .insert([{
-                title: formData.title,
-                event_type: formData.event_type,
-                location: formData.location,
-                start_date: formData.start_date,
-                start_time: formData.start_time,
-                image_url: formData.image_url
-            }])
+        try {
+            // Check session again? RLS handles it, but good for UX
+            if (!session) throw new Error('No active session')
 
-        setLoading(false)
+            let error
 
-        if (error) {
-            alert('Error creating event: ' + error.message)
-        } else {
-            alert('Event created successfully!')
-            setFormData({
-                title: '',
-                event_type: 'tournament',
-                location: '',
-                start_date: '',
-                start_time: '',
-                image_url: '/images/team/event1.webp'
-            })
-            if (fileInputRef.current) fileInputRef.current.value = ''
+            if (editingId) {
+                // Update
+                const { error: updateError } = await supabase
+                    .from('events')
+                    .update({
+                        title: formData.title,
+                        event_type: formData.event_type,
+                        location: formData.location,
+                        start_date: formData.start_date,
+                        start_time: formData.start_time,
+                        image_url: formData.image_url,
+                        coach: formData.coach
+                    })
+                    .eq('id', editingId)
+
+                error = updateError
+            } else {
+                // Insert
+                const { error: insertError } = await supabase
+                    .from('events')
+                    .insert([{
+                        title: formData.title,
+                        event_type: formData.event_type,
+                        location: formData.location,
+                        start_date: formData.start_date,
+                        start_time: formData.start_time,
+                        image_url: formData.image_url,
+                        coach: formData.coach
+                    }])
+
+                error = insertError
+            }
+
+            if (error) throw error
+
+            // Refresh events
             fetchEvents()
+
+            // Reset form
+            cancelEdit() // This resets form and editingId
+
+            alert(editingId ? 'Event updated successfully!' : 'Event created successfully!')
+
+        } catch (error: any) {
+            console.error('Error saving event:', error)
+            alert('Error saving event: ' + error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
-    const deleteEvent = async (id: number) => {
+    const handleDelete = async (id: number, imageUrl: string | null) => {
         if (!confirm('Are you sure you want to delete this event?')) return
 
-        const { error } = await supabase
-            .from('events')
-            .delete()
-            .eq('id', id)
+        try {
+            // 1. Delete the DB record
+            const { error } = await supabase
+                .from('events')
+                .delete()
+                .eq('id', id)
 
-        if (error) {
-            alert('Error deleting event: ' + error.message)
-        } else {
+            if (error) throw error
+
+            // 2. Delete the Image from Storage if it exists and is not default
+            // Check if imageUrl is from our bucket
+            if (imageUrl && imageUrl.includes('supabase') && !imageUrl.includes('default')) {
+                // Extract path from URL
+                // URL format: .../storage/v1/object/public/images/training/filename.webp
+                // We need 'training/filename.webp'
+                const urlParts = imageUrl.split('/images/')
+                if (urlParts.length > 1) {
+                    const storagePath = urlParts[1]
+                    const { error: storageError } = await supabase.storage
+                        .from('images')
+                        .remove([storagePath])
+
+                    if (storageError) console.error('Error deleting image:', storageError)
+                }
+            }
+
             fetchEvents()
+        } catch (error: any) {
+            console.error('Error deleting event:', error)
+            alert('Error deleting event: ' + error.message)
         }
     }
 
-    // Background Component
-    const AdminBackground = () => (
-        <div className="fixed inset-0 z-0 select-none pointer-events-none">
-            <div className="absolute inset-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src="/images/global/image-bg.webp"
-                    alt=""
-                    className="w-full h-full object-cover opacity-40"
-                />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/95 via-[#0a1628]/85 to-[#0a1628]/95 backdrop-blur-sm"></div>
-        </div>
-    )
+    const generateAttendanceLink = async (eventId: number) => {
+        try {
+            // Generate a simple unique token
+            const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
+            const { error } = await supabase
+                .from('events')
+                .update({ attendance_token: token })
+                .eq('id', eventId)
+
+            if (error) throw error
+
+            // Update local state without refetching for speed
+            setEvents(events.map(e => e.id === eventId ? { ...e, attendance_token: token } : e))
+
+        } catch (error: any) {
+            console.error('Error generating attendance link:', error)
+            alert('Failed to generate link: ' + error.message)
+        }
+    }
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        setErrorMsg('')
+
+        try {
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            })
+
+            if (error) throw error
+
+        } catch (error: any) {
+            console.error('Login error:', error)
+            setErrorMsg(error.message || 'Failed to login')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut()
+        setSession(null)
+    }
 
     if (!session) {
         return (
-            <div className="min-h-screen bg-[#0a1628] flex items-center justify-center px-4 relative overflow-hidden">
+            <div>
                 <AdminBackground />
-
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl max-w-md w-full relative z-10"
-                >
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-black text-white mb-2">ADMIN ACCESS</h1>
-                        <p className="text-gray-400 text-sm">Welcome back, Captain.</p>
-                    </div>
-
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        {/* Error Message Display */}
-                        {errorMsg && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm text-center font-medium"
-                            >
-                                {errorMsg}
-                            </motion.div>
-                        )}
-
-                        <div>
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all placeholder-gray-600"
-                                placeholder="admin@example.com"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all placeholder-gray-600"
-                                placeholder="Enter admin password"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-gradient-to-r from-blue-700 to-red-700 text-white font-bold py-4 rounded-lg hover:shadow-lg hover:shadow-red-900/20 transition-all transform hover:scale-[1.02] disabled:opacity-50"
-                        >
-                            {loading ? 'SIGNING IN...' : 'ACCESS DASHBOARD'}
-                        </button>
-                    </form>
-                    <div className="mt-6 text-center">
-                        <Link href="/" className="text-sm text-gray-500 hover:text-white transition-colors">
-                            ← Back to Website
-                        </Link>
-                    </div>
-                </motion.div>
+                <LoginForm
+                    handleLogin={handleLogin}
+                    email={email}
+                    setEmail={setEmail}
+                    password={password}
+                    setPassword={setPassword}
+                    loading={loading}
+                    errorMsg={errorMsg}
+                />
             </div>
         )
     }
@@ -331,212 +372,39 @@ export default function AdminPage() {
             <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10 flex-grow">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 h-full">
                     {/* Add Event Form */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl h-fit"
-                    >
-                        <div className="flex items-center gap-3 mb-8">
-                            <span className="w-1 h-8 bg-gradient-to-b from-red-500 to-red-700 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]"></span>
-                            <h2 className="text-2xl font-bold text-white tracking-wide">ADD NEW EVENT</h2>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Event Title</label>
-                                    <input
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                        required
-                                        disabled={formData.event_type === 'training'}
-                                        className={`w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder-gray-600 ${formData.event_type === 'training' ? 'opacity-50 cursor-not-allowed text-gray-400' : ''}`}
-                                        placeholder={formData.event_type === 'training' ? "Auto-generated (Select Date)" : "e.g. Summer Cup"}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Type</label>
-                                    <div className="relative">
-                                        <select
-                                            name="event_type"
-                                            value={formData.event_type}
-                                            onChange={handleInputChange}
-                                            className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all appearance-none cursor-pointer"
-                                        >
-                                            <option value="tournament">Tournament</option>
-                                            <option value="training">Training</option>
-                                        </select>
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                            ▼
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Location</label>
-                                <div className="flex bg-black/40 border border-gray-700 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-600 transition-all">
-                                    <div className="px-4 py-3 bg-white/5 text-gray-400 border-r border-gray-700">📍</div>
-                                    <input
-                                        name="location"
-                                        value={formData.location}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                        required
-                                        className="w-full px-4 py-3 bg-transparent text-white outline-none placeholder-gray-600"
-                                        placeholder="Venue Address"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Date</label>
-                                    <input
-                                        name="start_date"
-                                        value={formData.start_date}
-                                        onChange={handleInputChange}
-                                        type="date"
-                                        required
-                                        className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder-gray-600 cursor-pointer"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Time</label>
-                                    <input
-                                        name="start_time"
-                                        value={formData.start_time}
-                                        onChange={handleInputChange}
-                                        type="time"
-                                        required
-                                        className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder-gray-600 cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Image Upload Section */}
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Event Image</label>
-
-                                <div className="space-y-4">
-                                    {/* File Input */}
-                                    <div className={`border-2 border-dashed border-gray-700 rounded-lg p-6 text-center transition-all bg-black/20 ${uploading ? 'opacity-50 cursor-wait' : 'hover:border-blue-500 hover:bg-white/5'}`}>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageUpload}
-                                            ref={fileInputRef}
-                                            disabled={uploading}
-                                            className="hidden"
-                                            id="file-upload"
-                                        />
-                                        <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center gap-2">
-                                            {uploading ? (
-                                                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                            ) : (
-                                                <svg className="w-8 h-8 text-gray-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            )}
-                                            <span className="text-sm text-gray-300 font-medium">
-                                                {uploading ? 'Processing & Uploading...' : 'Click to Upload Image'}
-                                            </span>
-                                            <span className="text-xs text-gray-500">Auto-converts to WebP</span>
-                                        </label>
-                                    </div>
-
-                                    {/* Preview or URL Display */}
-                                    <div className="bg-black/40 border border-gray-700 rounded-lg p-3 flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-white/10 rounded overflow-hidden flex-shrink-0 relative">
-                                            {formData.image_url && (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
-                                            )}
-                                        </div>
-                                        {formData.image_url && !formData.image_url.startsWith('/images') ? (
-                                            <div className="flex-1 text-sm text-green-400 font-medium flex items-center gap-2">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                                Image Uploaded Successfully
-                                            </div>
-                                        ) : (
-                                            <div className="flex-1 text-sm text-gray-400 italic">
-                                                No specific image uploaded (using default)
-                                            </div>
-                                        )}
-                                        {/* Hidden input to keep state but hide URL from view */}
-                                        <input
-                                            type="hidden"
-                                            name="image_url"
-                                            value={formData.image_url}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={loading || uploading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-red-600 text-white font-bold py-4 rounded-lg hover:shadow-lg hover:shadow-red-900/20 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
-                            >
-                                {loading ? 'PUBLISHING...' : 'PUBLISH EVENT'}
-                            </button>
-                        </form>
-                    </motion.div>
+                    <EventForm
+                        formData={formData}
+                        setFormData={setFormData}
+                        handleInputChange={handleInputChange}
+                        handleSubmit={handleSubmit}
+                        handleImageUpload={handleImageUpload}
+                        uploading={uploading}
+                        loading={loading}
+                        editingId={editingId}
+                        cancelEdit={cancelEdit}
+                        fileInputRef={fileInputRef}
+                        showCoach={showCoach}
+                        setShowCoach={setShowCoach}
+                    />
 
                     {/* Existing Events List */}
-                    <div className="space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl h-full flex flex-col"
-                        >
-                            <div className="flex items-center gap-3 mb-8">
-                                <span className="w-1 h-8 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.5)]"></span>
-                                <h2 className="text-2xl font-bold text-white tracking-wide">RECENT EVENTS</h2>
-                            </div>
-
-                            <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar flex-grow">
-                                {events.length === 0 ? (
-                                    <div className="text-center py-12 border-2 border-dashed border-gray-700 rounded-xl bg-black/20">
-                                        <p className="text-gray-500">No events found. Add one on the left!</p>
-                                    </div>
-                                ) : events.map((event) => (
-                                    <motion.div
-                                        layout
-                                        key={event.id}
-                                        className="flex items-center gap-4 p-4 bg-black/20 border border-white/5 rounded-xl hover:bg-white/5 transition-all group"
-                                    >
-                                        <div className="w-16 h-16 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 relative border border-white/10">
-                                            <div className={`absolute inset-0 flex items-center justify-center text-xs font-bold z-10 ${event.event_type === 'training' ? 'text-blue-400 bg-blue-900/40' : 'text-yellow-400 bg-yellow-900/40'
-                                                }`}>
-                                                {event.event_type === 'training' ? 'TRN' : 'CUP'}
-                                            </div>
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={event.image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-bold text-white leading-tight truncate">{event.title}</h4>
-                                            <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider flex items-center gap-2">
-                                                <span className="truncate">{event.start_date}</span>
-                                                <span className="w-1 h-1 bg-gray-600 rounded-full flex-shrink-0"></span>
-                                                <span className={event.event_type === 'training' ? 'text-blue-400' : 'text-yellow-400'}>{event.event_type}</span>
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => deleteEvent(event.id)}
-                                            className="text-gray-600 hover:text-red-500 p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all"
-                                            title="Delete Event"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </div>
+                    <EventList
+                        events={events}
+                        handleEdit={handleEdit}
+                        handleDelete={handleDelete}
+                        generateAttendanceLink={generateAttendanceLink}
+                        handleViewAttendance={(id, title) => setViewAttendanceEvent({ id, title })}
+                    />
                 </div>
+
+                {/* Attendance Modal */}
+                {viewAttendanceEvent && (
+                    <AttendanceModal
+                        eventId={viewAttendanceEvent.id}
+                        eventTitle={viewAttendanceEvent.title}
+                        onClose={() => setViewAttendanceEvent(null)}
+                    />
+                )}
             </main>
         </div>
     )

@@ -4,11 +4,18 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 
 // Dynamically import the map component to avoid SSR issues
 const MapComponent = dynamic(() => import('./MapComponent'), { ssr: false })
 
 export default function Footer() {
+  const pathname = usePathname()
+
+  if (pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12 md:py-16">
@@ -49,7 +56,7 @@ export default function Footer() {
           {/* Right Section - Field Location */}
           <div className="lg:col-span-1">
             <h3 className="text-white font-bold text-sm uppercase mb-4 tracking-wide">FIELD LOCATION</h3>
-            
+
             {/* Address */}
             <div className="mb-4">
               <div className="flex items-start gap-3 mb-4">
