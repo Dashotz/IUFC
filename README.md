@@ -2,6 +2,8 @@
 
 A modern, animated website for Imus United Football Club built with Next.js, featuring smooth animations, team information, events, and deployed on Netlify.
 
+**Live URL:** [https://iufc.netlify.app](https://iufc.netlify.app)
+
 ## Features
 
 - Modern, responsive design with Tailwind CSS
@@ -14,126 +16,82 @@ A modern, animated website for Imus United Football Club built with Next.js, fea
 - Contact section
 - Interactive map for field location
 - Optimized image handling
-- Optimized for Netlify deployment
-- Scroll to top button
-- Animated hero section
-
-## Project Structure
-
-```
-├── app/              # Next.js app directory
-│   ├── about/        # About page
-│   ├── contact/      # Contact page
-│   └── page.tsx      # Home page
-├── components/       # React components
-│   ├── Hero.tsx      # Hero section with navigation
-│   ├── Footer.tsx    # Footer component
-│   ├── Sponsors.tsx   # Sponsors section
-│   ├── TeamSection.tsx # Team and coaches section
-│   └── ...           # Other components
-└── public/           # Static assets (images, videos)
-```
-
-## Customization
-
-### Styling
-
-The project uses Tailwind CSS. Customize colors in `tailwind.config.ts`:
-- Primary colors are defined in the `primary` color palette
-- Modify the theme to match your team's colors
-
-### Team Information
-
-The site is already configured for **Imus United Football Club**. Update the following files if needed:
-- `app/about/page.tsx` - Team information
-- `app/contact/page.tsx` - Contact details
-- `components/Header.tsx` - Team name/logo
-- `components/Footer.tsx` - Footer links (includes Facebook link)
-
-### Adding Real Images
-
-All images are stored in the `public/images/` directory:
-- `public/images/global/` - Logo and background images
-- `public/images/team/` - Team photos and event images
-- `public/images/coaches/` - Coach photos
-- `public/images/sponsors/` - Sponsor logos
-- `public/images/gallery/` - Gallery images
-
-Update image paths in components to reference images from the `public` folder.
+- **SEO Optimized:** Sitemap, Robots.txt, JSON-LD structured data, and Open Graph tags.
 
 ## Admin Dashboard & Backend
 
 Powered by **Supabase**, the custom-built Admin Dashboard provides full control over club operations.
 
-### Features
+### Key Capabilities
 - **Operations Center**: Secure, animated login dashboard for club administrators.
-- **Event Management**: CRUD capabilities for training sessions and tournaments, featuring:
+- **Event Management**: 
+    - Create/Edit/Delete Training Sessions and Tournaments.
+    - **Kit Colors**: Designate text-based kit colors (e.g., "Red", "Blue") for specific events.
     - Automatic date/title formatting.
     - Image uploads with client-side WebP conversion.
 - **Attendance System**:
-    - "Who's Going?" Transparency: Publicly viewable attendance lists.
-    - Smart Copy: One-click formatted attendance list generation for WhatsApp/Messenger.
-    - Secure Sign-up: Public attendance registration without login.
-- **Security**:
-    - Robust Row Level Security (RLS) policies.
-    - Protected Admin routes and actions.
-- **UI/UX**:
-    - Custom animated modals for alerts and confirmations.
-    - Glassmorphism design aesthetics.
+    - **Public Registration**: Parents/Players can register for an event (Training/Tournament) without logging in.
+    - **Age Brackets**: Intelligent grouping of attendees (U5, U7/U9, U10/U12, U13/U14) for better organization.
+    - **"Who's Going?" Visibility**: Publicly viewable attendance lists with kit requirements.
+    - **Smart Copy**: One-click formatted attendance list generation for WhatsApp/Messenger, including:
+        - Event Details (Date, Time, Location).
+        - Kit Color requirement.
+        - Attendees grouped by age bracket.
+
+### Security
+- **Row Level Security (RLS)**: Robust database policies ensuring data privacy.
+- **Protected Routes**: Middleware to secure admin access.
+
+## Project Structure
+
+```
+├── app/              # Next.js app directory
+│   ├── admin/        # Admin Dashboard & Auth
+│   ├── attendance/   # Public Attendance Registration
+│   ├── about/        # About page
+│   ├── contact/      # Contact page
+│   ├── layout.tsx    # Root layout with SEO metadata
+│   ├── sitemap.ts    # Sitemap generator
+│   └── robots.ts     # Robots.txt generator
+├── components/       # React components
+│   ├── EventsSection.tsx # Public Events display
+│   ├── PublicAttendanceModal.tsx # Public view of attendees
+│   ├── Hero.tsx      # Hero section
+│   └── ...           
+└── lib/              # Utilities (Supabase client, etc.)
+```
 
 ## Technologies Used
 
 ### Core Framework
-- **Next.js 14** - React framework with App Router and static export
-- **React 18** - UI library
-- **TypeScript** - Type safety and better developer experience
-- **Supabase** - Backend-as-a-Service (Auth, Database, Storage)
+- **Next.js 14** - App Router & Static Export
+- **React 18** - UI Library
+- **TypeScript** - Type Safety
+- **Supabase** - Auth, Database, Storage
 
 ### Styling & UI
-- **Tailwind CSS** - Utility-first CSS framework
-- **PostCSS** - CSS processing
-- **Autoprefixer** - Automatic vendor prefixing
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **Three.js / React Three Fiber** - 3D Graphics
 
-### Animation & 3D Graphics
-- **Framer Motion** - Animation library for React (smooth page transitions and scroll animations)
-- **Three.js** - 3D graphics library
-- **React Three Fiber** - React renderer for Three.js
-- **@react-three/drei** - Useful helpers and abstractions for React Three Fiber
-- **gl-matrix** - High-performance matrix and vector math for WebGL
+### SEO & Performance
+- **Metadata API**: Dynamic SEO tags.
+- **Sitemap/Robots**: Automated discovery.
+- **JSON-LD**: Structured data for Search Engines.
+- **WebP Images**: Auto-optimization.
 
-### Maps & Location
-- **Leaflet** - Interactive maps library
-- **React Leaflet** - React components for Leaflet
-- **OpenStreetMap** - Map tile provider
+## Customization
 
-### Development Tools
-- **ESLint** - Code linting
-- **Next.js ESLint Config** - Optimized ESLint configuration for Next.js
+### Styling
+Colors are customizable in `tailwind.config.ts`. The primary theme reflects the club's identity.
 
-### Deployment & Hosting
-- **Netlify** - Static site hosting and deployment
-- **Static Export** - Fully static site generation for optimal performance
-
-## Features & Animations
-
-### Interactive 3D Gallery
-- **Team Gallery Sphere**: Interactive 3D rotating sphere showcasing team photos
-- **WebGL-powered**: Smooth 60fps 3D rendering using Three.js and React Three Fiber
-- **Touch & Mouse Controls**: Drag to rotate, intuitive navigation
-
-### Animation Features
-- **Hero Section**: Animated hero with background image and gradient overlay
-- **Page Transitions**: Smooth fade and slide animations on page load
-- **Section Animations**: Elements animate as they come into view using Intersection Observer
-- **Scroll Animations**: Smooth scroll behavior for navigation with scroll-to-top and scroll-to-team buttons
-- **Interactive Elements**: Hover and tap animations throughout
-- **Sponsors Carousel**: Infinite scrolling sponsors section
-
-### Performance Optimizations
-- **WebP Images**: All images converted to WebP format for optimal file sizes
-- **Lazy Loading**: Images load on demand to improve initial page load
-- **Code Splitting**: Optimized bundle splitting for faster load times
-- **Static Export**: Fully static site for maximum performance
+### Environment Variables
+Required `.env.local` variables:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+NEXT_PUBLIC_ADMIN_PASSWORD=your_secure_password
+```
 
 ## License
 
