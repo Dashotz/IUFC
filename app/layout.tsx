@@ -8,11 +8,48 @@ import ScrollToTeam from '@/components/ScrollToTeam'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Imus United Football Club - Official Website',
-  description: 'Official website of Imus United Football Club. A non-profit organization dedicated to developing morally upright athletes capable of availing scholarships and competing at the national and international level.',
+  title: 'Imus United Football Club',
+  description: 'The official website of Imus United Football Club (IUFC). Join the premier football club in Imus, Cavite. We offer youth training, competitive tournaments, and a community for football enthusiasts.',
+  keywords: [
+    'imus football', 'imus united', 'imus', 'imus united website', 'football club imus', 'soccer training cavite', 'youth football philippines', 'grassroots soccer', 'football tournament cavite', 'football clinic'],
+  authors: [{ name: 'Imus United FC' }],
+  creator: 'Imus United FC',
+  publisher: 'Imus United FC',
   icons: {
     icon: '/images/global/logo.png',
     apple: '/images/global/logo.png',
+  },
+  openGraph: {
+    title: 'Imus United Football Club',
+    description: 'Join Imus United Football Club. Developing athletes, building character, and fostering a love for the beautiful game in Imus, Cavite.',
+    url: 'https://imusunited.com', // Placeholder, update if domain is known
+    siteName: 'Imus United FC',
+    images: [
+      {
+        url: '/images/global/logo.png',
+        width: 800,
+        height: 600,
+        alt: 'Imus United FC Logo',
+      },
+      {
+        url: '/images/team/event.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Imus United Team Action',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Imus United Football Club',
+    description: 'Premier football club in Imus, Cavite. Youth training, tournaments, and community.',
+    images: ['/images/team/event.webp'], // Using a wider image for twitter card looks better
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 
