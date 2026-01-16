@@ -63,6 +63,29 @@ export default function RootLayout({
       <body className={`${inter.className} overflow-x-hidden`} suppressHydrationWarning>
         <main className="min-h-screen overflow-x-hidden">{children}</main>
         <Footer />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SportsTeam',
+              'name': 'Imus United Football Club',
+              'alternateName': 'IUFC',
+              'url': 'https://iufc.netlify.app',
+              'logo': 'https://iufc.netlify.app/images/global/logo.png',
+              'location': {
+                '@type': 'Place',
+                'address': {
+                  '@type': 'PostalAddress',
+                  'addressLocality': 'Imus',
+                  'addressRegion': 'Cavite',
+                  'addressCountry': 'Philippines'
+                }
+              },
+              'description': 'Premier football club in Imus, Cavite dedicated to youth development and competitive excellence.'
+            })
+          }}
+        />
         <ScrollToTop />
         <ScrollToTeam />
       </body>
