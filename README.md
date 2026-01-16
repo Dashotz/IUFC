@@ -85,14 +85,6 @@ Powered by **Supabase**, the custom-built Admin Dashboard provides full control 
 ### Styling
 Colors are customizable in `tailwind.config.ts`. The primary theme reflects the club's identity.
 
-### Environment Variables
-Required `.env.local` variables:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-NEXT_PUBLIC_ADMIN_PASSWORD=your_secure_password
-```
-
 ## License
 
 MIT
