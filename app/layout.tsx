@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Imus United Football Club',
     description: 'Join Imus United Football Club. Developing athletes, building character, and fostering a love for the beautiful game in Imus, Cavite.',
-    url: 'https://imusunited.com', // Placeholder, update if domain is known
+    url: 'https://iufc.netlify.app',
     siteName: 'Imus United FC',
     images: [
       {
