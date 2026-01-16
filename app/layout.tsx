@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     icon: '/images/global/logo.png',
     apple: '/images/global/logo.png',
   },
+  alternates: {
+    canonical: 'https://iufc.netlify.app',
+  },
   openGraph: {
     title: 'Imus United Football Club',
     description: 'Join Imus United Football Club. Developing athletes, building character, and fostering a love for the beautiful game in Imus, Cavite.',
