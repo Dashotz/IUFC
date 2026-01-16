@@ -16,6 +16,7 @@ interface EventFormProps {
         start_time: string
         image_url: string
         coach: string
+        kit_color: string
     }
     setFormData: React.Dispatch<React.SetStateAction<any>>
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
@@ -79,12 +80,28 @@ export default function EventForm({
                     onChange={handleInputChange}
                 />
 
-                <CoachManager
-                    coachValue={formData.coach}
-                    onCoachChange={(val) => setFormData((prev: any) => ({ ...prev, coach: val }))}
-                    showCoach={showCoach}
-                    setShowCoach={setShowCoach}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <CoachManager
+                        coachValue={formData.coach}
+                        onCoachChange={(val) => setFormData((prev: any) => ({ ...prev, coach: val }))}
+                        showCoach={showCoach}
+                        setShowCoach={setShowCoach}
+                    />
+
+                    <div className="mt-1">
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                            Kit Color
+                        </label>
+                        <input
+                            type="text"
+                            name="kit_color"
+                            value={formData.kit_color || ''}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-black/40 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder-gray-600"
+                            placeholder="e.g. Red, Blue"
+                        />
+                    </div>
+                </div>
 
                 <ImageUploader
                     imageUrl={formData.image_url}

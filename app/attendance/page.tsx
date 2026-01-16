@@ -12,6 +12,7 @@ interface TrainingEvent {
     start_time: string
     location: string
     event_type: string
+    kit_color?: string
 }
 
 function AttendanceForm() {
@@ -22,6 +23,7 @@ function AttendanceForm() {
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [name, setName] = useState('')
+    const [ageBracket, setAgeBracket] = useState('')
     const [submitted, setSubmitted] = useState(false)
     const [error, setError] = useState('')
 
@@ -36,7 +38,7 @@ function AttendanceForm() {
             try {
                 const { data, error } = await supabase
                     .from('events')
-                    .select('id, title, start_date, start_time, location, event_type')
+                    .select('id, title, start_date, start_time, location, event_type, kit_color')
                     .eq('attendance_token', token)
                     .single()
 
@@ -59,7 +61,7 @@ function AttendanceForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!name.trim() || !event) return
+        if (!name.trim() || !ageBracket || !event) return
 
         setSubmitting(true)
         try {
@@ -68,7 +70,8 @@ function AttendanceForm() {
                 .insert([
                     {
                         event_id: event.id,
-                        attendee_name: name.trim()
+                        attendee_name: name.trim(),
+                        age_bracket: ageBracket
                     }
                 ])
 
@@ -138,13 +141,22 @@ function AttendanceForm() {
                         Attendance Check-in
                     </span>
                     <h1 className="text-2xl font-bold text-white mb-2">{event.title}</h1>
-                    <div className="flex items-center justify-center gap-4 text-gray-400 text-sm">
-                        <span className="flex items-center gap-1">
-                            📅 {new Date(event.start_date).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                            ⏰ {event.start_time.slice(0, 5)}
-                        </span>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-center gap-4 text-gray-400 text-sm">
+                            <span className="flex items-center gap-1">
+                                📅 {new Date(event.start_date).toLocaleDateString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                                ⏰ {event.start_time.slice(0, 5)}
+                            </span>
+                        </div>
+                        {event.kit_color && (
+                            <div className="flex items-center justify-center gap-2">
+                                <span className="bg-white/10 text-gray-200 text-xs px-3 py-1 rounded-full border border-white/5 font-medium flex items-center gap-2">
+                                    👕 Kit: <span className="text-white font-bold">{event.kit_color}</span>
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -161,6 +173,31 @@ function AttendanceForm() {
                             className="w-full px-4 py-4 bg-black/40 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all placeholder-gray-600 text-lg"
                             placeholder="Enter your name..."
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                            Age Bracket
+                        </label>
+                        <div className="relative">
+                            <select
+                                value={ageBracket}
+                                onChange={(e) => setAgeBracket(e.target.value)}
+                                required
+                                className="w-full px-4 py-4 bg-black/40 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all appearance-none text-lg cursor-pointer"
+                            >
+                                <option value="" disabled className="text-gray-500">Select Age Bracket</option>
+                                <option value="U5">U5</option>
+                                <option value="U7/U9">U7/U9</option>
+                                <option value="U10/U12">U10/U12</option>
+                                <option value="U13/U14">U13/U14</option>
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-400">
+                                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     <button

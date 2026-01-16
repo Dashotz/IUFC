@@ -16,13 +16,14 @@ interface Event {
   image_url: string // mapped from DB image_url
   event_type: 'training' | 'tournament' // from DB
   coach?: string // mapped from DB coach
+  kit_color?: string // mapped from DB kit_color
 }
 
 export default function EventsSection() {
   const [trainingEvents, setTrainingEvents] = useState<Event[]>([])
   const [tournamentEvents, setTournamentEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [viewEvent, setViewEvent] = useState<{ id: number; title: string } | null>(null)
+  const [viewEvent, setViewEvent] = useState<{ id: number; title: string, kitColor?: string } | null>(null)
 
   useEffect(() => {
     async function fetchEvents() {
@@ -47,7 +48,8 @@ export default function EventsSection() {
             start_time: evt.start_time,
             image_url: evt.image_url,
             event_type: evt.event_type,
-            coach: evt.coach
+            coach: evt.coach,
+            kit_color: evt.kit_color
           }))
 
           setTrainingEvents(formattedEvents.filter(e => e.event_type === 'training'))
@@ -118,7 +120,7 @@ export default function EventsSection() {
                     key={event.id}
                     event={event}
                     index={index}
-                    onViewAttendees={(id, title) => setViewEvent({ id, title })}
+                    onViewAttendees={(id, title, kit_color) => setViewEvent({ id, title, kitColor: kit_color })}
                   />
                 ))
               )}
@@ -157,6 +159,7 @@ export default function EventsSection() {
         <PublicAttendanceModal
           eventId={viewEvent.id}
           eventTitle={viewEvent.title}
+          kitColor={viewEvent.kitColor}
           onClose={() => setViewEvent(null)}
         />
       )}
@@ -164,7 +167,7 @@ export default function EventsSection() {
   )
 }
 
-function EventCard({ event, index, onViewAttendees }: { event: Event; index: number; onViewAttendees?: (id: number, title: string) => void }) {
+function EventCard({ event, index, onViewAttendees }: { event: Event; index: number; onViewAttendees?: (id: number, title: string, kit_color?: string) => void }) {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return ''
     try {
@@ -250,7 +253,7 @@ function EventCard({ event, index, onViewAttendees }: { event: Event; index: num
             {/* View Attendees Button (Training Only) */}
             {event.event_type === 'training' && onViewAttendees && (
               <button
-                onClick={() => onViewAttendees(event.id, event.title)}
+                onClick={() => onViewAttendees(event.id, event.title, event.kit_color)}
                 className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors border border-blue-200 uppercase"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

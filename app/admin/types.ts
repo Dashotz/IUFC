@@ -9,4 +9,5 @@ export interface AdminEvent {
     created_at: string
     coach: string // Added coach field
     attendance_token?: string
+    kit_color?: string // Added kit_color field
 }

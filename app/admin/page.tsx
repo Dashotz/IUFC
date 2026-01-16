@@ -38,7 +38,8 @@ export default function AdminPage() {
         start_date: '',
         start_time: '',
         image_url: '/images/team/event1.webp',
-        coach: ''
+        coach: '',
+        kit_color: ''
     })
 
     useEffect(() => {
@@ -76,6 +77,7 @@ export default function AdminPage() {
         }
     }
 
+
     const handleEdit = (event: AdminEvent) => {
         setEditingId(event.id)
         setFormData({
@@ -85,7 +87,8 @@ export default function AdminPage() {
             start_date: event.start_date,
             start_time: event.start_time,
             image_url: event.image_url,
-            coach: event.coach || ''
+            coach: event.coach || '',
+            kit_color: event.kit_color || ''
         })
         setShowCoach(!!event.coach)
         setIsFormOpen(true)
@@ -100,7 +103,8 @@ export default function AdminPage() {
             start_date: '',
             start_time: '',
             image_url: '/images/team/event1.webp',
-            coach: ''
+            coach: '',
+            kit_color: ''
         })
         setShowCoach(false)
         setIsFormOpen(false)
@@ -216,7 +220,8 @@ export default function AdminPage() {
                         start_date: formData.start_date,
                         start_time: formData.start_time,
                         image_url: formData.image_url,
-                        coach: formData.coach
+                        coach: formData.coach,
+                        kit_color: formData.kit_color
                     })
                     .eq('id', editingId)
 
@@ -232,7 +237,8 @@ export default function AdminPage() {
                         start_date: formData.start_date,
                         start_time: formData.start_time,
                         image_url: formData.image_url,
-                        coach: formData.coach
+                        coach: formData.coach,
+                        kit_color: formData.kit_color
                     }])
 
                 error = insertError
@@ -402,7 +408,8 @@ export default function AdminPage() {
                                 start_date: '',
                                 start_time: '',
                                 image_url: '/images/team/event1.webp',
-                                coach: ''
+                                coach: '',
+                                kit_color: ''
                             })
                             setIsFormOpen(true)
                         }}
