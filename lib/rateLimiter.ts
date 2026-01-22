@@ -1,6 +1,6 @@
 /**
- * Client-side rate limiter utility
- * Tracks attempts and implements exponential backoff
+ * Persistent Rate Limiter using localStorage
+ * Survives page reloads
  */
 
 interface RateLimitConfig {
@@ -15,28 +15,45 @@ interface AttemptRecord {
     blockedUntil?: number
 }
 
-class RateLimiter {
-    private attempts: Map<string, AttemptRecord> = new Map()
+class PersistentRateLimiter {
+    private storageKey = 'iufc_rate_limits'
 
-    /**
-     * Check if an action is allowed
-     * @param key - Unique identifier (e.g., 'login', 'attendance-submit')
-     * @param config - Rate limit configuration
-     * @returns Object with allowed status and remaining time if blocked
-     */
+    private getStorage(): Map<string, AttemptRecord> {
+        try {
+            const data = localStorage.getItem(this.storageKey)
+            if (!data) return new Map()
+
+            const obj = JSON.parse(data)
+            return new Map(Object.entries(obj))
+        } catch {
+            return new Map()
+        }
+    }
+
+    private setStorage(attempts: Map<string, AttemptRecord>): void {
+        try {
+            const obj = Object.fromEntries(attempts)
+            localStorage.setItem(this.storageKey, JSON.stringify(obj))
+        } catch (error) {
+            console.error('Failed to save rate limit data:', error)
+        }
+    }
+
     checkLimit(
         key: string,
         config: RateLimitConfig
     ): { allowed: boolean; remainingMs?: number; attemptsLeft?: number } {
         const now = Date.now()
-        const record = this.attempts.get(key)
+        const attempts = this.getStorage()
+        const record = attempts.get(key)
 
         // No previous attempts
         if (!record) {
-            this.attempts.set(key, {
+            attempts.set(key, {
                 count: 1,
                 firstAttempt: now,
             })
+            this.setStorage(attempts)
             return { allowed: true, attemptsLeft: config.maxAttempts - 1 }
         }
 
@@ -51,10 +68,11 @@ class RateLimiter {
         // Check if window has expired
         if (now - record.firstAttempt > config.windowMs) {
             // Reset the window
-            this.attempts.set(key, {
+            attempts.set(key, {
                 count: 1,
                 firstAttempt: now,
             })
+            this.setStorage(attempts)
             return { allowed: true, attemptsLeft: config.maxAttempts - 1 }
         }
 
@@ -64,44 +82,40 @@ class RateLimiter {
         // Check if limit exceeded
         if (record.count > config.maxAttempts) {
             record.blockedUntil = now + config.blockDurationMs
-            this.attempts.set(key, record)
+            attempts.set(key, record)
+            this.setStorage(attempts)
             return {
                 allowed: false,
                 remainingMs: config.blockDurationMs,
             }
         }
 
-        this.attempts.set(key, record)
+        attempts.set(key, record)
+        this.setStorage(attempts)
         return {
             allowed: true,
             attemptsLeft: config.maxAttempts - record.count,
         }
     }
 
-    /**
-     * Reset rate limit for a specific key
-     */
     reset(key: string): void {
-        this.attempts.delete(key)
+        const attempts = this.getStorage()
+        attempts.delete(key)
+        this.setStorage(attempts)
     }
 
-    /**
-     * Clear all rate limit records
-     */
     clearAll(): void {
-        this.attempts.clear()
+        localStorage.removeItem(this.storageKey)
     }
 
-    /**
-     * Get current attempt count for a key
-     */
     getAttemptCount(key: string): number {
-        return this.attempts.get(key)?.count || 0
+        const attempts = this.getStorage()
+        return attempts.get(key)?.count || 0
     }
 }
 
 // Singleton instance
-export const rateLimiter = new RateLimiter()
+export const persistentRateLimiter = new PersistentRateLimiter()
 
 // Preset configurations
 export const RateLimitPresets = {
@@ -122,9 +136,6 @@ export const RateLimitPresets = {
     },
 }
 
-/**
- * Format remaining time for user display
- */
 export function formatRemainingTime(ms: number): string {
     const minutes = Math.ceil(ms / 60000)
     if (minutes < 1) return 'less than a minute'

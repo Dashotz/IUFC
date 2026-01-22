@@ -4,7 +4,6 @@ import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
-import { rateLimiter, RateLimitPresets, formatRemainingTime } from '@/lib/rateLimiter'
 
 interface TrainingEvent {
     id: number
@@ -73,15 +72,6 @@ function AttendanceForm() {
         e.preventDefault()
         if (!name.trim() || !ageBracket || !event) return
 
-        // Check rate limit
-        const limitCheck = rateLimiter.checkLimit(`attendance-${event.id}`, RateLimitPresets.ATTENDANCE)
-
-        if (!limitCheck.allowed) {
-            const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
-            alert(`Too many submission attempts. Please wait ${timeRemaining} before trying again.`)
-            return
-        }
-
         setSubmitting(true)
         try {
             const { error } = await supabase
@@ -97,8 +87,6 @@ function AttendanceForm() {
             if (error) throw error
 
             setSubmitted(true)
-            // Reset rate limiter on successful submission
-            rateLimiter.reset(`attendance-${event.id}`)
         } catch (err: any) {
             console.error(err)
             alert('Failed to submit attendance: ' + err.message)

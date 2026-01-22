@@ -41,6 +41,19 @@ Powered by **Supabase**, the custom-built Admin Dashboard provides full control 
 ### Security
 - **Row Level Security (RLS)**: Robust database policies ensuring data privacy.
 - **Protected Routes**: Middleware to secure admin access.
+- **Rate Limiting**: 
+    - Client-side rate limiting for login attempts (5 attempts per 15 minutes)
+    - IP-based rate limiting via Netlify Edge Functions (60 requests/minute)
+    - Attendance submission throttling (3 attempts per 5 minutes)
+- **Token Expiration**: Attendance links expire after 7 days for enhanced security.
+- **Security Headers**: 
+    - Content Security Policy (CSP)
+    - HTTP Strict Transport Security (HSTS)
+    - XSS Protection
+    - Clickjacking prevention
+- **Login Attempt Tracking**: Database logging of all authentication attempts.
+
+For detailed security documentation, see [SECURITY.md](./SECURITY.md).
 
 ## Project Structure
 

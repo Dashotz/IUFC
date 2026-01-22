@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabaseClient'
-import { rateLimiter, RateLimitPresets, formatRemainingTime } from '@/lib/rateLimiter'
+import { checkLoginRateLimit, logLoginAttempt, formatRemainingTime } from '@/lib/serverRateLimiter'
 import AdminBackground from './components/AdminBackground'
 import LoginForm from './components/LoginForm'
 import EventForm from './components/EventForm'
@@ -304,19 +304,6 @@ export default function AdminPage() {
 
     const generateAttendanceLink = async (eventId: number) => {
         try {
-            // Check rate limit
-            const limitCheck = rateLimiter.checkLimit('token-generation', RateLimitPresets.TOKEN_GENERATION)
-
-            if (!limitCheck.allowed) {
-                const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
-                setAlertState({
-                    isOpen: true,
-                    type: 'error',
-                    message: `Too many token generation requests. Please wait ${timeRemaining}.`
-                })
-                return
-            }
-
             // Generate a secure unique token
             const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
@@ -349,42 +336,44 @@ export default function AdminPage() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
-
-        // Check rate limit
-        const limitCheck = rateLimiter.checkLimit('admin-login', RateLimitPresets.LOGIN)
-
-        if (!limitCheck.allowed) {
-            const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
-            setErrorMsg(`Too many login attempts. Please try again in ${timeRemaining}.`)
-            return
-        }
-
         setLoading(true)
         setErrorMsg('')
 
         try {
+            // Check rate limit (server-side)
+            const limitCheck = await checkLoginRateLimit(email, 15, 5)
+
+            if (!limitCheck.allowed) {
+                const timeRemaining = formatRemainingTime(limitCheck.timeUntilReset)
+                setErrorMsg(`Too many login attempts. Please try again in ${timeRemaining}.`)
+                setLoading(false)
+                return
+            }
+
+            // Attempt login
             const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             })
 
+            // Log the attempt (server-side)
+            await logLoginAttempt(email, !error)
+
             if (error) {
-                // Failed login - rate limit will track this
+                // Failed login
+                const attemptsLeft = 5 - (limitCheck.attemptsCount + 1)
+                if (attemptsLeft > 0) {
+                    setErrorMsg(`${error.message || 'Failed to login'}. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`)
+                } else {
+                    setErrorMsg(`${error.message || 'Failed to login'}. Account temporarily locked.`)
+                }
                 throw error
             }
 
-            // Success - reset rate limiter
-            rateLimiter.reset('admin-login')
+            // Success - login attempt logged automatically above
 
         } catch (error: any) {
-            console.error('Login error:', error)
-            const attemptsLeft = limitCheck.attemptsLeft || 0
-
-            if (attemptsLeft > 0) {
-                setErrorMsg(`${error.message || 'Failed to login'}. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`)
-            } else {
-                setErrorMsg(error.message || 'Failed to login')
-            }
+            // Error message already set above or handled by UI
         } finally {
             setLoading(false)
         }
