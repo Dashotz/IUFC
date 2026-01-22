@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabaseClient'
+import { rateLimiter, RateLimitPresets, formatRemainingTime } from '@/lib/rateLimiter'
 import AdminBackground from './components/AdminBackground'
 import LoginForm from './components/LoginForm'
 import EventForm from './components/EventForm'
@@ -303,18 +304,42 @@ export default function AdminPage() {
 
     const generateAttendanceLink = async (eventId: number) => {
         try {
-            // Generate a simple unique token
+            // Check rate limit
+            const limitCheck = rateLimiter.checkLimit('token-generation', RateLimitPresets.TOKEN_GENERATION)
+
+            if (!limitCheck.allowed) {
+                const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
+                setAlertState({
+                    isOpen: true,
+                    type: 'error',
+                    message: `Too many token generation requests. Please wait ${timeRemaining}.`
+                })
+                return
+            }
+
+            // Generate a secure unique token
             const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
+            // Set expiration to 7 days from now
+            const expiresAt = new Date()
+            expiresAt.setDate(expiresAt.getDate() + 7)
 
             const { error } = await supabase
                 .from('events')
-                .update({ attendance_token: token })
+                .update({
+                    attendance_token: token,
+                    token_expires_at: expiresAt.toISOString()
+                })
                 .eq('id', eventId)
 
             if (error) throw error
 
             // Update local state without refetching for speed
-            setEvents(events.map(e => e.id === eventId ? { ...e, attendance_token: token } : e))
+            setEvents(events.map(e => e.id === eventId ? {
+                ...e,
+                attendance_token: token,
+                token_expires_at: expiresAt.toISOString()
+            } : e))
 
         } catch (error: any) {
             console.error('Error generating attendance link:', error)
@@ -324,6 +349,16 @@ export default function AdminPage() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        // Check rate limit
+        const limitCheck = rateLimiter.checkLimit('admin-login', RateLimitPresets.LOGIN)
+
+        if (!limitCheck.allowed) {
+            const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
+            setErrorMsg(`Too many login attempts. Please try again in ${timeRemaining}.`)
+            return
+        }
+
         setLoading(true)
         setErrorMsg('')
 
@@ -333,11 +368,23 @@ export default function AdminPage() {
                 password,
             })
 
-            if (error) throw error
+            if (error) {
+                // Failed login - rate limit will track this
+                throw error
+            }
+
+            // Success - reset rate limiter
+            rateLimiter.reset('admin-login')
 
         } catch (error: any) {
             console.error('Login error:', error)
-            setErrorMsg(error.message || 'Failed to login')
+            const attemptsLeft = limitCheck.attemptsLeft || 0
+
+            if (attemptsLeft > 0) {
+                setErrorMsg(`${error.message || 'Failed to login'}. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`)
+            } else {
+                setErrorMsg(error.message || 'Failed to login')
+            }
         } finally {
             setLoading(false)
         }

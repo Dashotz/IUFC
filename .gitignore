@@ -35,5 +35,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Security - Sensitive files
+*_credentials.*
+*_secrets.*
+*.backup
+*.bak
 
-
+# IDE
+.vscode/settings.json
+.idea/

@@ -6,6 +6,40 @@ const nextConfig = {
   },
   // Compress and optimize output
   compress: true,
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'geolocation=(), microphone=(), camera=(), payment=()'
+          }
+        ],
+      },
+    ]
+  },
   webpack: (config, { isServer }) => {
     // Handle video files
     config.module.rules.push({
@@ -15,7 +49,7 @@ const nextConfig = {
         filename: 'static/media/[name].[hash][ext]',
       },
     })
-    
+
     // Optimize bundle splitting
     if (!isServer) {
       config.optimization = {
@@ -45,7 +79,7 @@ const nextConfig = {
         },
       }
     }
-    
+
     return config
   },
 }

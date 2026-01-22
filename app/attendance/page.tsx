@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
+import { rateLimiter, RateLimitPresets, formatRemainingTime } from '@/lib/rateLimiter'
 
 interface TrainingEvent {
     id: number
@@ -13,6 +14,7 @@ interface TrainingEvent {
     location: string
     event_type: string
     kit_color?: string
+    token_expires_at?: string
 }
 
 function AttendanceForm() {
@@ -38,11 +40,19 @@ function AttendanceForm() {
             try {
                 const { data, error } = await supabase
                     .from('events')
-                    .select('id, title, start_date, start_time, location, event_type, kit_color')
+                    .select('id, title, start_date, start_time, location, event_type, kit_color, token_expires_at')
                     .eq('attendance_token', token)
                     .single()
 
                 if (error || !data) throw new Error('Event not found or link expired')
+
+                // Check if token has expired
+                if (data.token_expires_at) {
+                    const expirationDate = new Date(data.token_expires_at)
+                    if (expirationDate < new Date()) {
+                        throw new Error('This attendance link has expired. Please contact the admin for a new link.')
+                    }
+                }
 
                 if (data.event_type !== 'training') {
                     throw new Error('This event type does not support attendance tracking')
@@ -63,6 +73,15 @@ function AttendanceForm() {
         e.preventDefault()
         if (!name.trim() || !ageBracket || !event) return
 
+        // Check rate limit
+        const limitCheck = rateLimiter.checkLimit(`attendance-${event.id}`, RateLimitPresets.ATTENDANCE)
+
+        if (!limitCheck.allowed) {
+            const timeRemaining = formatRemainingTime(limitCheck.remainingMs || 0)
+            alert(`Too many submission attempts. Please wait ${timeRemaining} before trying again.`)
+            return
+        }
+
         setSubmitting(true)
         try {
             const { error } = await supabase
@@ -78,6 +97,8 @@ function AttendanceForm() {
             if (error) throw error
 
             setSubmitted(true)
+            // Reset rate limiter on successful submission
+            rateLimiter.reset(`attendance-${event.id}`)
         } catch (err: any) {
             console.error(err)
             alert('Failed to submit attendance: ' + err.message)

@@ -9,5 +9,6 @@ export interface AdminEvent {
     created_at: string
     coach: string // Added coach field
     attendance_token?: string
+    token_expires_at?: string // Token expiration timestamp
     kit_color?: string // Added kit_color field
 }
