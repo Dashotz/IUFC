@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: 'Imus United Football Club',
   description: 'The official website of Imus United Football Club (IUFC). Join the premier football club in Imus, Cavite. We offer youth training, competitive tournaments, and a community for football enthusiasts.',
   keywords: [
-    'imus football', 'imus united', 'imus', 'imus united website', 'football club imus', 'soccer training cavite', 'youth football philippines', 'grassroots soccer', 'football tournament cavite', 'football clinic'],
+    'imus football', 'imus academy', 'football academy', 'imus united', 'imus', 'imus united website', 'football club imus', 'soccer training cavite', 'youth football philippines', 'grassroots soccer', 'football tournament cavite', 'football clinic'],
   authors: [{ name: 'Imus United FC' }],
   creator: 'Imus United FC',
   publisher: 'Imus United FC',
